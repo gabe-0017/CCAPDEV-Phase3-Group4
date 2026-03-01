@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LabReserve SignUp</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+
+  <body class="bg center-page">
+    <div class="form-card">
+      <h2>Create Account</h2>
+      <p class="subtitle">Fill up the form to register.</p>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="full_name" required />
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" required />
+        </div>
+
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="new_user" required />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="new_pass" required />
+        </div>
+
+        <div class="form-group">
+          <label>Role</label>
+          <select required>
+            <option disabled selected>Select role</option>
+            <option>Student</option>
+            <option>Admin</option>
+            <option>Lab Technician</option>
+          </select>
+        </div>
+
+        <div class="register-actions">
+          <button type="submit" class="btn-large">Register</button>
+          <a href="../index.html" class="btn-cancel-register">cancel</a>
+        </div>
+      </form>
+    </div>
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>
