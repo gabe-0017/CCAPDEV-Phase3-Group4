@@ -7,6 +7,13 @@
   font-family: Arial, sans-serif;
 }
 
+.center-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
 .bg {
   background: #90ee90;
 }
@@ -41,73 +48,7 @@
   font-style: italic;
 }
 
-/*index.html*/
-
-.login-title {
-  margin-bottom: 5px;
-}
-
-.login-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #087830;
-}
-
-.login-container {
-  background: white;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0px 20px 40px rgb(0, 0, 0);
-  text-align: center;
-  width: 320px;
-}
-
-.login-container input {
-  width: 100%;
-  padding: 10px 20px;
-  margin: 5px;
-  border-radius: 5px;
-}
-
-/*home.html*/
-
-.welcome-title {
-  font-size: 75px;
-  font-weight: 750;
-  color: #087830;
-}
-
-.portal {
-  background: #90ee90;
-  text-align: center;
-  margin-top: 100px;
-}
-
-.portal-grid {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 50px;
-}
-
-.portal-card {
-  text-decoration: none;
-  color: black;
-  background: white;
-  padding: 25px;
-  width: 225px;
-  border-radius: 15px;
-  box-shadow: 0px 10px 20px rgb(0, 0, 0);
-  transition: 0.5s;
-}
-
-.portal-card:hover {
-  transform: translateY(-5px);
-}
-
-/*other html (labs, reservation, manage)*/
+/*other html*/
 
 .logo {
   text-decoration: none;
@@ -148,6 +89,114 @@
 .subtitle {
   color: #36454f;
   margin-bottom: 30px;
+}
+
+/*index.html*/
+
+.login-title {
+  margin-bottom: 5px;
+}
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #087830;
+}
+
+.login-container {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0px 20px 40px rgb(0, 0, 0);
+  text-align: center;
+  width: 320px;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.login-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #087830;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary:hover {
+  background-color: #90ee90;
+  color: white;
+}
+
+/*register.html*/
+
+.register-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-cancel-register {
+  text-align: center;
+  background-color: white;
+  color: #36454f;
+  text-decoration: none;
+}
+
+.btn-cancel-register:hover {
+  text-decoration: underline
+}
+
+/*home.html*/
+
+.welcome-title {
+  font-size: 75px;
+  font-weight: 750;
+  color: #087830;
+}
+
+.portal {
+  background: #90ee90;
+  text-align: center;
+  margin-top: 100px;
+}
+
+.portal-grid {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 50px;
+}
+
+.portal-card {
+  text-decoration: none;
+  color: black;
+  background: white;
+  padding: 25px;
+  width: 225px;
+  border-radius: 15px;
+  box-shadow: 0px 10px 20px rgb(0, 0, 0);
+  transition: 0.5s;
+}
+
+.portal-card:hover {
+  transform: translateY(-5px);
 }
 
 /*labs.html*/
@@ -228,9 +277,12 @@
 /*reservation.html*/
 
 .form-card {
+  width: 100%;
   max-width: 500px;
   margin: auto;
   background: white;
+  align-items: center;
+  justify-content: center;
   padding: 50px;
   border-radius: 25px;
   box-shadow: 0 25px 50px rgb(0, 0, 0);
@@ -255,6 +307,7 @@
 }
 
 /*manage.html*/
+
 .manage-container {
   max-width: 1000px;
   margin: auto;
@@ -331,7 +384,7 @@
 }
 
 .detail-value {
-  color: #4a5568;
+  color: #808080;
 }
 
 .reservation-actions {
@@ -361,4 +414,51 @@
 
 .btn-view:hover {
   background-color: #2a3540;
+}
+
+/*logout.html*/
+
+.logout-card {
+  width: 100%;
+  max-width: 300px;
+  background: white;
+  gap: 15px;
+  padding: 30px;
+  margin-top: 30px;
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgb(0, 0, 0);
+  text-align: center;
+}
+
+.logout-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-confirm-logout{
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #ff6b6b;
+  color: white;
+  text-decoration: none;
+}
+
+.btn-cancel-logout {
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #90ee90;
+  color: white;
+  text-decoration: none;
+}
+
+.btn-confirm-logout:hover {
+  background-color: #ff0000;
+}
+
+.btn-cancel-logout:hover {
+  background-color: #087830;
 }
