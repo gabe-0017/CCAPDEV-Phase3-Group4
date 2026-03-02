@@ -416,7 +416,7 @@
   background-color: #2a3540;
 }
 
-/*logout.html & cancel.html (modals)*/
+/*cancel.html, edit.html, logout.html, view-details.html (modals)*/
 
 .modal {
   display: none;
@@ -445,6 +445,18 @@
 .modal-card {
   width: 100%;
   max-width: 300px;
+  background: white;
+  gap: 5px;
+  padding: 30px;
+  margin-top: 15px;
+  border-radius: 15px;
+  box-shadow: 0 15px 30px rgb(0, 0, 0);
+  text-align: center;
+}
+
+.modal-card-2 {
+  width: 100%;
+  max-width: 750px;
   background: white;
   gap: 5px;
   padding: 30px;
@@ -486,3 +498,4 @@
 .btn-cancel-modal:hover {
   background-color: #087830;
 }
+
