@@ -9,10 +9,12 @@ if(form){
         const password = document.getElementById("password").value;
 
         // any input is valid (for now)
-        if(username !== "" && password !== ""){
-            window.location.href = "pages/home.html";
-        }
-        else{
+        if(username =="Admin" && password =="Admin"){
+            window.location.href = "pages/AdminHome.html";
+        }else if(username !== "" && password !== ""){
+          
+          window.location.href = "pages/home.html";
+        }else{
             alert("Please enter username and password.");
         }
     });
@@ -125,5 +127,51 @@ function initializeCancelModal() {
   if (confirmCancel) confirmCancel.addEventListener("click", () => {
     cancelModal.style.display = "none";
     alert("Reservation Cancelled!"); // replace with actual 'cancel' logic later
+  });
+}
+
+/* cancel Student's reservation (called from Adminmanage)*/
+
+
+function canRemove() {
+  document.querySelectorAll(".reservation-card").forEach(card => {
+    const cancelBtn = card.querySelector(".btn-cancel");
+
+    if (!cancelBtn) return;
+
+    const dateText = card.querySelectorAll(".detail-value")[1].textContent.trim();
+    const timeText = card.querySelectorAll(".detail-value")[2].textContent.trim();
+    const startTime = timeText.split(" - ")[0];
+
+    const reservationTime = new Date(`${dateText} ${startTime}`);
+
+    function checkWindow() {
+      const now = new Date();
+      const minutesDiff = (now - reservationTime) / (1000 * 60);
+
+      if (minutesDiff >= 0 && minutesDiff <= 10) {
+        cancelBtn.disabled = false;
+        cancelBtn.title = "";
+      } else {
+        cancelBtn.disabled = true;
+        cancelBtn.title = "Can only cancel within 10 minutes of reservation start";
+      }
+    }
+
+    checkWindow();
+    setInterval(checkWindow, 30000);
+
+    cancelBtn.addEventListener("click", function () {
+      if (!this.disabled) {
+        // Change status badge to Cancelled
+        const statusBadge = card.querySelector(".status-badge");
+        statusBadge.textContent = "Cancelled";
+        statusBadge.className = "status-badge cancelled";
+
+        // Remove Edit and Cancel buttons, add View Details
+        const actionsDiv = card.querySelector(".reservation-actions");
+        actionsDiv.innerHTML = `<button class="btn btn-view">View Details</button>`;
+      }
+    });
   });
 }
