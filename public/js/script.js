@@ -73,3 +73,57 @@ function initializeLogoutModal() {
     });
   }
 }
+
+/* edit reservation modal */
+fetch("/modals/edit.html")
+  .then(r => r.text())
+  .then(data => {
+    document.body.insertAdjacentHTML("beforeend", data);
+    initializeEditModal();
+  });
+
+function initializeEditModal() {
+  const editBtns = document.querySelectorAll(".btn-edit");
+  const editModal = document.getElementById("editModal");
+  const confirmEdit = document.getElementById("confirmEdit");
+
+  editBtns.forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      editModal.style.display = "flex";
+    });
+  });
+
+  if (confirmEdit) confirmEdit.addEventListener("click", () => {
+    editModal.style.display = "none";
+    alert("Reservation Updated!"); // replace with actual 'edit' logic later
+  });
+}
+
+/* cancel reservation modal */
+fetch("/modals/cancel.html")
+  .then(r => r.text())
+  .then(data => {
+    document.body.insertAdjacentHTML("beforeend", data);
+    initializeCancelModal();
+  });
+
+function initializeCancelModal() {
+  const cancelBtns = document.querySelectorAll(".btn-cancel");
+  const cancelModal = document.getElementById("cancelModal");
+  const cancelCancel = document.getElementById("cancelCancel");
+  const confirmCancel = document.getElementById("confirmCancel");
+
+  cancelBtns.forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      cancelModal.style.display = "flex";
+    });
+  });
+
+  if (cancelCancel) cancelCancel.addEventListener("click", () => cancelModal.style.display = "none");
+  if (confirmCancel) confirmCancel.addEventListener("click", () => {
+    cancelModal.style.display = "none";
+    alert("Reservation Cancelled!"); // replace with actual 'cancel' logic later
+  });
+}
