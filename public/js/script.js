@@ -41,7 +41,7 @@ if (registerForm) {
   });
 }
 
-/* logout modal */
+/* logout (modal) */
 fetch("/modals/logout.html")
   .then(response => response.text())
   .then(data => {
@@ -76,7 +76,7 @@ function initializeLogoutModal() {
   }
 }
 
-/* edit reservation modal */
+/* edit reservation (modal) */
 fetch("/modals/edit.html")
   .then(r => r.text())
   .then(data => {
@@ -102,7 +102,7 @@ function initializeEditModal() {
   });
 }
 
-/* cancel reservation modal */
+/* cancel reservation (modal) */
 fetch("/modals/cancel.html")
   .then(r => r.text())
   .then(data => {
@@ -128,6 +128,47 @@ function initializeCancelModal() {
     cancelModal.style.display = "none";
     alert("Reservation Cancelled!"); // replace with actual 'cancel' logic later
   });
+}
+
+/* view reservation details (modal) */
+fetch("/modals/view-details.html")
+  .then(r => r.text())
+  .then(data => {
+    document.body.insertAdjacentHTML("beforeend", data);
+    initializeViewDetailsModal();
+  });
+
+function initializeViewDetailsModal() {
+
+  const viewBtns = document.querySelectorAll(".btn-view");
+  const modal = document.getElementById("viewDetailsModal");
+  const closeBtn = document.getElementById("closeDetails");
+
+  viewBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+
+      const reservationId = btn.dataset.id;
+
+      // empty placeholders (for now)
+      document.getElementById("detailTitle").textContent = "Laboratory - Seat";
+      document.getElementById("detailStatus").textContent = "Status";
+      document.getElementById("detailId").textContent = reservationId || "...";
+      document.getElementById("detailName").textContent = "...";
+      document.getElementById("detailReserved").textContent = "...";
+      document.getElementById("detailArrived").textContent = "...";
+      document.getElementById("detailDate").textContent = "...";
+      document.getElementById("detailTime").textContent = "...";
+      document.getElementById("detailTech").textContent = "...";
+
+      modal.style.display = "flex";
+    });
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+  }
 }
 
 /* cancel Student's reservation (called from Adminmanage)*/
@@ -175,3 +216,4 @@ function canRemove() {
     });
   });
 }
+
