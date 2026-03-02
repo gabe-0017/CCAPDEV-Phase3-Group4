@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Our Laboratories</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+
+  <body class="bg">
+    <header>
+      <nav class="navbar">
+        <a class="logo" href="home.html">LabReserve.</a>
+
+        <ul class="nav-links">
+
+          <li><a href="labs.html">Laboratories</a></li>
+          <li><a href="reservation.html">Reserve</a></li>
+          <li><a href="manage.html">Manage</a></li>
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container">
+      <h2>Laboratory Seats</h2>
+      <p class="subtitle">Select a laboratory to view available seats.</p>
+
+      <div>
+        <select class="lab-select">
+          <option value="" selected>Choose a lab...</option>
+          <option value="lab1">Lab 1</option>
+          <option value="lab2">Lab 2</option>
+          <option value="lab3">Lab 3</option>
+          <option value="lab4">Lab 4</option>
+          <option value="lab5">Lab 5</option>
+          <option value="lab6">Lab 6</option>
+        </select>
+      </div>
+
+      <div class="seat-map">
+        <div class="screen">Black/White Board</div>
+
+        <div class="seat-grid">
+          <div class="seat reserved">A1</div>
+          <div class="seat">A2</div>
+          <div class="seat">A3</div>
+          <div class="seat">A4</div>
+          <div class="seat">A5</div>
+          <div class="seat">A6</div>
+
+          <div class="seat">B1</div>
+          <div class="seat">B2</div>
+          <div class="seat">B3</div>
+          <div class="seat">B4</div>
+          <div class="seat">B5</div>
+          <div class="seat reserved">B6</div>
+
+          <div class="seat">C1</div>
+          <div class="seat reserved">C2</div>
+          <div class="seat">C3</div>
+          <div class="seat">C4</div>
+          <div class="seat">C5</div>
+          <div class="seat">C6</div>
+
+          <div class="seat">D1</div>
+          <div class="seat">D2</div>
+          <div class="seat">D3</div>
+          <div class="seat">D4</div>
+          <div class="seat reserved">D5</div>
+          <div class="seat">D6</div>
+
+          <div class="seat">E1</div>
+          <div class="seat">E2</div>
+          <div class="seat reserved">E3</div>
+          <div class="seat">E4</div>
+          <div class="seat">E5</div>
+          <div class="seat">E6</div>
+
+          <div class="seat">F1</div>
+          <div class="seat">F2</div>
+          <div class="seat">F3</div>
+          <div class="seat reserved">F4</div>
+          <div class="seat">F5</div>
+          <div class="seat">F6</div>
+        </div>
+
+        <div class="legend">
+          <span class="seat-legend"></span> Available
+          <span class="seat-legend reserved"></span> Reserved
+        </div>
+      </div>
+    </main>
+
+    <script src="/js/script.js"></script>
+  </body>
+</html>
