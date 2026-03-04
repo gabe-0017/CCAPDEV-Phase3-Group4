@@ -552,3 +552,63 @@
 .searched-seat.selected {
   background: #90ee90;
 }
+
+/* Card design for search results */
+.search-results-card {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.search-results-card h3 {
+  color: #087830;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.slots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: flex-start;
+}
+
+.slot-card {
+  background: white;
+  border: 2px solid #c9e0c3;
+  padding: 15px;
+  border-radius: 10px;
+  flex: 0 1 calc(33.333% - 10px);
+  min-width: 240px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+}
+
+.slot-card:hover {
+  background: #f9f9f9;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.slot-card.available {
+  border-left: 4px solid #087830;
+}
+
+.slot-time {
+  font-weight: bold;
+  color: #087830;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.slot-info {
+  font-size: 14px;
+  color: #36454f;
+  margin-bottom: 12px;
+}
+
+.slot-info p {
+  margin: 5px 0;
+}
