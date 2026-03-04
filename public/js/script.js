@@ -1,19 +1,32 @@
 /* login verification */
-const form = document.getElementById("loginForm");
+const loginForm = document.getElementById("loginForm");
 
-if(form){
-    form.addEventListener("submit", function(e){
+if (loginForm) {
+    loginForm.addEventListener("submit", function(e) {
         e.preventDefault(); // stop page reload
 
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
 
-        if(username == "Admin" && password == "Admin"){
-            window.location.href = "pages/AdminHome.html";
-        }else if(username !== "" && password !== ""){
+        let storedUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        // fake admin login (for testing only)
+        if (username.toLowerCase() === "admin" && password.toLowerCase() === "admin") {
+            storedUser = {
+                username: "admin",
+                role: "admin"
+            };
+            localStorage.setItem("currentUser", JSON.stringify(storedUser));
+            localStorage.setItem("role", "admin");
             window.location.href = "pages/home.html";
-        }else{
-            alert("Please enter username and password.");
+            return;
+        }
+
+        if (storedUser && username === storedUser.username && password === storedUser.password) {
+            localStorage.setItem("role", storedUser.role);
+            window.location.href = "pages/home.html";
+        } else {
+            alert("Invalid username or password.");
         }
     });
 }
@@ -22,21 +35,39 @@ if(form){
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
-  registerForm.addEventListener("submit", function(e) {
-    e.preventDefault(); // stop page reload
+    registerForm.addEventListener("submit", function(e) {
+        e.preventDefault(); // stop page reload
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("new_pass").value;
-    const username = document.getElementById("new_user").value;
-    const fullname = document.getElementById("full_name").value;
+        const fullname = document.getElementById("full_name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const username = document.getElementById("new_user").value.trim();
+        const password = document.getElementById("new_pass").value.trim();
+        const role = document.getElementById("role").value.trim();
 
-    // fake registration (doesn't save any info yet)
-    if (fullname !== "" && email !== "" && username !== "" && password !== "") {
-      window.location.href = "home.html";
-    } else {
-      alert("Please enter your information.");
-    }
-  });
+        if (fullname && email && username && password && role) {
+            let userView;
+            if (role === "Lab Technician") {
+              userView = "admin";
+            } else {
+              userView = "student";
+            }
+            
+            const user = {};
+            user.fullname = fullname;
+            user.email = email;
+            user.username = username;
+            user.password = password;
+            user.role = userView;
+
+            localStorage.setItem("currentUser", JSON.stringify(user));
+            localStorage.setItem("role", user.role);
+
+            alert("Registration successful!");
+            window.location.href = "pages/home.html";
+        } else {
+            alert("Please fill out all fields.");
+        }
+    });
 }
 
 /* logout (modal) */
@@ -225,6 +256,7 @@ function canRemove() {
     });
   });
 }
+
 
 
 
