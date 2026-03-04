@@ -8,12 +8,10 @@ if(form){
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
 
-        // any input is valid (for now)
-        if(username =="Admin" && password =="Admin"){
+        if(username !== "" && password !== ""){ // any input is valid (for now)
+            window.location.href = "pages/home.html";
+        }else if(username =="Admin" && password =="Admin"){ // temporary admin login
             window.location.href = "pages/AdminHome.html";
-        }else if(username !== "" && password !== ""){
-          
-          window.location.href = "pages/home.html";
         }else{
             alert("Please enter username and password.");
         }
@@ -32,7 +30,7 @@ if (registerForm) {
     const username = document.getElementById("new_user").value;
     const fullname = document.getElementById("full_name").value;
 
-    // fake registration (doesn't save any info)
+    // fake registration (doesn't save any info yet)
     if (fullname !== "" && email !== "" && username !== "" && password !== "") {
       window.location.href = "home.html";
     } else {
@@ -216,4 +214,5 @@ function canRemove() {
     });
   });
 }
+
 
