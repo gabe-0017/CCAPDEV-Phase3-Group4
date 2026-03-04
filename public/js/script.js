@@ -85,7 +85,8 @@ fetch("/modals/edit.html")
 function initializeEditModal() {
   const editBtns = document.querySelectorAll(".btn-edit");
   const editModal = document.getElementById("editModal");
-  const confirmEdit = document.getElementById("confirmEdit");
+  const editForm = document.getElementById("editReservationForm");
+  const cancelEdit = document.getElementById("cancelEdit");
 
   editBtns.forEach(btn => {
     btn.addEventListener("click", e => {
@@ -94,10 +95,20 @@ function initializeEditModal() {
     });
   });
 
-  if (confirmEdit) confirmEdit.addEventListener("click", () => {
-    editModal.style.display = "none";
-    alert("Reservation Updated!"); // replace with actual 'edit' logic later
-  });
+  if (editForm) {
+    editForm.addEventListener("submit", e => {
+      e.preventDefault(); // prevent page reload
+
+      editModal.style.display = "none";
+      alert("Reservation Updated!"); // replace later with real DB logic
+    });
+  }
+
+  if (cancelEdit) {
+    cancelEdit.addEventListener("click", () => {
+      editModal.style.display = "none";
+    });
+  }
 }
 
 /* cancel reservation (modal) */
@@ -214,5 +225,6 @@ function canRemove() {
     });
   });
 }
+
 
 
