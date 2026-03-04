@@ -105,6 +105,34 @@ function initializeLogoutModal() {
   }
 }
 
+/* delete account (modal) */
+function initializeDeleteModal() {
+  const deleteBtn = document.getElementById("deleteAccountBtn");
+  const modal = document.getElementById("deleteModal");
+  const cancelBtn = document.getElementById("cancelDelete");
+  const confirmBtn = document.getElementById("confirmDelete");
+
+  if (deleteBtn) {
+    deleteBtn.addEventListener("click", () => {
+      modal.style.display = "flex"; // show modal
+    });
+  }
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", () => {
+      modal.style.display = "none"; // hide modal
+    });
+  }
+
+  if (confirmBtn) {
+    confirmBtn.addEventListener("click", () => {
+      modal.style.display = "none"; 
+      alert("Account deleted!"); // add real DB logic later
+      window.location.href = "/index.html"; // return to login after deletion
+    });
+  }
+}
+
 /* edit reservation (modal) */
 fetch("/modals/edit.html")
   .then(r => r.text())
@@ -131,7 +159,7 @@ function initializeEditModal() {
       e.preventDefault(); // prevent page reload
 
       editModal.style.display = "none";
-      alert("Reservation Updated!"); // replace later with real DB logic
+      alert("Reservation Updated!"); // add real DB logic later
     });
   }
 
@@ -166,7 +194,7 @@ function initializeCancelModal() {
   if (cancelCancel) cancelCancel.addEventListener("click", () => cancelModal.style.display = "none");
   if (confirmCancel) confirmCancel.addEventListener("click", () => {
     cancelModal.style.display = "none";
-    alert("Reservation Cancelled!"); // replace with actual 'cancel' logic later
+    alert("Reservation Cancelled!"); // add real DB logic later
   });
 }
 
@@ -268,4 +296,5 @@ if (storedUser && storedUser.role === "admin") { // if current user's role=admin
       searchCard.style.display = "block";
     }
 }
+
 
