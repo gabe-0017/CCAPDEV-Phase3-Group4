@@ -8,10 +8,10 @@ if(form){
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
 
-        if(username !== "" && password !== ""){ // any input is valid (for now)
-            window.location.href = "pages/home.html";
-        }else if(username =="Admin" && password =="Admin"){ // temporary admin login
+        if(username == "Admin" && password == "Admin"){
             window.location.href = "pages/AdminHome.html";
+        }else if(username !== "" && password !== ""){
+            window.location.href = "pages/home.html";
         }else{
             alert("Please enter username and password.");
         }
@@ -225,6 +225,7 @@ function canRemove() {
     });
   });
 }
+
 
 
 
