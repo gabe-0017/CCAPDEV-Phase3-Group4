@@ -10,6 +10,18 @@ if (loginForm) {
 
         let storedUser = JSON.parse(localStorage.getItem("currentUser"));
 
+        // fake student login (for faster testing)
+        if (username.toLowerCase() === "student" && password.toLowerCase() === "student") {
+            storedUser = {
+                username: "student",
+                role: "student"
+            };
+            localStorage.setItem("currentUser", JSON.stringify(storedUser));
+            localStorage.setItem("role", "student");
+            window.location.href = "pages/home.html";
+            return;
+        }
+
         // fake admin login (for testing only)
         if (username.toLowerCase() === "admin" && password.toLowerCase() === "admin") {
             storedUser = {
@@ -325,7 +337,7 @@ function initializeNavbarRole() {
       link.textContent = "Search";
 
       li.appendChild(link);
-      navLinks.appendChild(li);
+      navLinks.insertBefore(li, navLinks.firstChild);
     }
   }
 }
@@ -349,3 +361,4 @@ function initializeReservationRole() {
 document.addEventListener("DOMContentLoaded", function () {
   initializeReservationRole();
 });
+
