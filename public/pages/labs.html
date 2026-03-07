@@ -22,7 +22,7 @@
     </header>
 
     <main class="container">
-      <h2>Laboratory Seats</h2>
+      <h2>Laboratory Slot Availability</h2>
       <p class="subtitle">Select a laboratory to view available seats.</p>
 
       <div>
@@ -41,7 +41,7 @@
         <div class="screen">Black/White Board</div>
 
         <div class="seat-grid">
-          <div class="seat reserved">A1</div>
+          <div class="seat">A1</div>
           <div class="seat">A2</div>
           <div class="seat">A3</div>
           <div class="seat">A4</div>
@@ -53,10 +53,10 @@
           <div class="seat">B3</div>
           <div class="seat">B4</div>
           <div class="seat">B5</div>
-          <div class="seat reserved">B6</div>
+          <div class="seat">B6</div>
 
           <div class="seat">C1</div>
-          <div class="seat reserved">C2</div>
+          <div class="seat">C2</div>
           <div class="seat">C3</div>
           <div class="seat">C4</div>
           <div class="seat">C5</div>
@@ -66,12 +66,12 @@
           <div class="seat">D2</div>
           <div class="seat">D3</div>
           <div class="seat">D4</div>
-          <div class="seat reserved">D5</div>
+          <div class="seat">D5</div>
           <div class="seat">D6</div>
 
           <div class="seat">E1</div>
           <div class="seat">E2</div>
-          <div class="seat reserved">E3</div>
+          <div class="seat">E3</div>
           <div class="seat">E4</div>
           <div class="seat">E5</div>
           <div class="seat">E6</div>
@@ -79,7 +79,7 @@
           <div class="seat">F1</div>
           <div class="seat">F2</div>
           <div class="seat">F3</div>
-          <div class="seat reserved">F4</div>
+          <div class="seat">F4</div>
           <div class="seat">F5</div>
           <div class="seat">F6</div>
         </div>
@@ -87,6 +87,18 @@
         <div class="legend">
           <span class="seat-legend"></span> Available
           <span class="seat-legend reserved"></span> Reserved
+        </div>
+        <div id="seatReservationPanel" class="seat-reservation-panel" style="display:none;">
+          <h3 id="reservationPanelTitle">Select a seat to view slot availability</h3>
+
+          <div class="reservation-controls">
+            <label for="reservationDate">Choose Date</label>
+            <input type="date" id="reservationDate" />
+          </div>
+
+          <div id="reservationTimeslots" class="reservation-timeslots">
+            <p class="hint">Select a seat and date to see available time slots.</p>
+          </div>
         </div>
       </div>
     </main>
