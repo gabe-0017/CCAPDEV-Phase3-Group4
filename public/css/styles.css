@@ -228,10 +228,88 @@
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
+  transition: background 0.2s;
 }
 
 .seat:hover {
   background: #90ee90;
+}
+
+.seat.selected {
+  background: #087830;
+  color: white;
+}
+
+.seat-reservation-panel {
+  margin-top: 30px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 850px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.reservation-controls {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.reservation-controls label {
+  font-weight: bold;
+  color: #36454f;
+}
+
+.reservation-controls input[type="date"] {
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #d3d3d3;
+}
+
+.reservation-timeslots {
+  overflow-x: auto;
+}
+
+.timeslot-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.timeslot-table th,
+.timeslot-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e5e5;
+  text-align: left;
+}
+
+.timeslot-table th {
+  background: #f4f7f6;
+  font-weight: 700;
+}
+
+.timeslot-table td.status {
+  font-weight: 700;
+}
+
+.timeslot-table td.status.available {
+  color: #087830;
+}
+
+.timeslot-table td.status.reserved {
+  color: #ff3d3d;
+}
+
+.timeslot-table a {
+  color: #087830;
+  text-decoration: none;
+}
+
+.timeslot-table a:hover {
+  text-decoration: underline;
 }
 
 .legend {
@@ -612,3 +690,4 @@
 .slot-info p {
   margin: 5px 0;
 }
+
