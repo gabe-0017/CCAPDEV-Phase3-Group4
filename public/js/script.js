@@ -538,3 +538,191 @@ function createReserveModal() {
   });
 }
 
+/* Laboratories slot availability */
+function initializeLabSeatReservationView() {
+  const seatGrid = document.querySelector('.seat-grid');
+  const reservationPanel = document.getElementById('seatReservationPanel');
+  const reservationTitle = document.getElementById('reservationPanelTitle');
+  const dateInput = document.getElementById('reservationDate');
+  const timeslotContainer = document.getElementById('reservationTimeslots');
+  const labSelect = document.querySelector('.lab-select');
+
+  if (!seatGrid || !reservationPanel || !reservationTitle || !dateInput || !timeslotContainer) return;
+
+  let selectedSeat = null;
+
+  const today = new Date();
+  dateInput.min = formatDateInput(today);
+  dateInput.max = formatDateInput(new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000));
+  dateInput.value = dateInput.min;
+
+  seatGrid.querySelectorAll('.seat').forEach(seat => {
+    seat.addEventListener('click', () => {
+      if (seat.classList.contains('reserved')) return;
+
+      document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
+      seat.classList.add('selected');
+
+      selectedSeat = seat.textContent.trim();
+      reservationPanel.style.display = 'block';
+      reservationTitle.textContent = `Seat ${selectedSeat} Reservations`;
+
+      renderTimeslots(selectedSeat, dateInput.value, labSelect?.value);
+    });
+  });
+
+  dateInput.addEventListener('change', () => {
+    if (!selectedSeat) return;
+    renderTimeslots(selectedSeat, dateInput.value, labSelect?.value);
+  });
+
+  if (labSelect) {
+    labSelect.addEventListener('change', () => {
+      selectedSeat = null;
+      document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
+      reservationPanel.style.display = 'none';
+      timeslotContainer.innerHTML = '<p class="hint">Select a seat and date to see available time slots.</p>';
+    });
+  }
+
+  ensureDemoReservations();
+
+  function renderTimeslots(seat, date, lab) {
+    const seatKey = `${lab || 'lab1'}-${seat}`;
+    const reservations = getReservations();
+    const dayReservations = (reservations[seatKey] && reservations[seatKey][date]) || {};
+
+    const slots = generateTimeSlots('08:00', '20:00');
+
+    const table = document.createElement('table');
+    table.className = 'timeslot-table';
+
+    const thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Time</th><th>Status</th><th>Reserved By</th></tr>';
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+
+    slots.forEach(slot => {
+      const startKey = slot.start;
+      const reservation = dayReservations[startKey];
+
+      const tr = document.createElement('tr');
+      const timeTd = document.createElement('td');
+      timeTd.textContent = `${slot.start} - ${slot.end}`;
+
+      const statusTd = document.createElement('td');
+      statusTd.className = 'status';
+
+      const reservedByTd = document.createElement('td');
+
+      if (reservation) {
+        statusTd.textContent = 'Reserved';
+        statusTd.classList.add('reserved');
+
+        if (reservation.anonymous) {
+          reservedByTd.textContent = 'Reserved anonymously';
+        } else {
+          const anchor = document.createElement('a');
+          anchor.textContent = reservation.username;
+          anchor.href = `profile.html?user=${encodeURIComponent(reservation.username)}`;
+          anchor.target = '_self';
+          reservedByTd.appendChild(anchor);
+        }
+      } else {
+        statusTd.textContent = 'Available';
+        statusTd.classList.add('available');
+        reservedByTd.textContent = '-';
+      }
+
+      tr.appendChild(timeTd);
+      tr.appendChild(statusTd);
+      tr.appendChild(reservedByTd);
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    timeslotContainer.innerHTML = '';
+    timeslotContainer.appendChild(table);
+  }
+
+  function generateTimeSlots(startTime, endTime) {
+    const slots = [];
+
+    const [startHour, startMin] = startTime.split(':').map(Number);
+    const [endHour, endMin] = endTime.split(':').map(Number);
+
+    let currentHour = startHour;
+    let currentMin = startMin;
+
+    const endTotalMin = endHour * 60 + endMin;
+
+    while (currentHour * 60 + currentMin < endTotalMin) {
+      const slotStart = `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`;
+
+      currentMin += 30;
+      if (currentMin >= 60) {
+        currentMin -= 60;
+        currentHour += 1;
+      }
+
+      const slotEnd = `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`;
+
+      slots.push({ start: slotStart, end: slotEnd });
+    }
+
+    return slots;
+  }
+
+  function formatDateInput(date) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function getReservations() {
+    const reservations = localStorage.getItem('labReservations');
+    return reservations ? JSON.parse(reservations) : {};
+  }
+
+  function saveReservations(reservations) {
+    localStorage.setItem('labReservations', JSON.stringify(reservations));
+  }
+
+  function ensureDemoReservations() {
+    const reservations = getReservations();
+    if (Object.keys(reservations).length > 0) return;
+
+    const todayKey = formatDateInput(new Date());
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowKey = formatDateInput(tomorrow);
+
+    const demo = {
+      'lab1-A1': {
+        [todayKey]: {
+          '08:00': { username: 'student', anonymous: false },
+          '10:00': { anonymous: true },
+          '13:00': { username: 'admin', anonymous: false }
+        },
+        [tomorrowKey]: {
+          '11:00': { username: 'student', anonymous: false }
+        }
+      },
+      'lab1-B2': {
+        [todayKey]: {
+          '09:30': { anonymous: true },
+          '14:00': { username: 'john_doe', anonymous: false }
+        }
+      }
+    };
+
+    saveReservations(demo);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  initializeLabSeatReservationView();
+});
+/* End of Laboratories slot availability */
