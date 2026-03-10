@@ -13,6 +13,7 @@ const reservationSchema = new mongoose.Schema({
     lab_tech: String,
     status: {
         type: String,
+        enum: ["Pending", "Approved", "Cancelled"],
         default: "Pending"
     }
 });
