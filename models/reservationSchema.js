@@ -6,9 +6,11 @@ const reservationSchema = new mongoose.Schema({
         ref: "User"
     },
     lab: String,
+    seat: String,
     date: String,
     time: String,
     purpose: String,
+    lab_tech: String,
     status: {
         type: String,
         default: "Pending"
