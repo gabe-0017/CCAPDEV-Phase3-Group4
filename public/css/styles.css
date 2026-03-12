@@ -431,6 +431,11 @@
   color: #087830;
 }
 
+.status-badge.pending {
+  background: #ffe08a;
+  color: #7a5c00;
+}
+
 .status-badge.completed {
   background: #e8e4c9;
   color: #36454f;
