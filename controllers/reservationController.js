@@ -11,6 +11,12 @@ exports.createReservation = async (req, res) => {
       return res.status(404).send("User not found.");
     }
 
+    const existingReservation = await Reservation.findOne({ lab, seat, date, time });
+
+    if (existingReservation) {
+      return res.status(400).send("Seat already reserved for this time slot.");
+    }
+
     const reservation = new Reservation({
       userId,
       lab,
