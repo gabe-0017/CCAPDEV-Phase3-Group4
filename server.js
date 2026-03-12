@@ -26,6 +26,16 @@ app.get("/reservations", reservationController.getReservations);
 app.delete("/reservation/:id", reservationController.cancelReservation);
 app.put("/reservation/:id", reservationController.editReservation);
 
+// status route
+app.get("/status", (req, res) => {
+  res.json({ status: "ok", uptime: process.uptime() });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).send("Error: Page not found.");
 });
