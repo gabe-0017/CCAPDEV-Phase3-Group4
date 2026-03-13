@@ -50,7 +50,7 @@ exports.createReservation = async (req, res) => {
 // get all reservations
 exports.getReservations = async (req, res) => {
     try {
-        const reservations = await Reservation.find()
+        const reservations = await Reservation.find({ userId: req.session.user._id })
             .populate("userId")
             .populate("lab");
 
