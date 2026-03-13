@@ -21,7 +21,11 @@ app.set("views", path.join(__dirname, "views"));
 app.engine("handlebars", exphbs.engine({
   extname: "handlebars",
   helpers: { eq: (a, b) => a === b },
-  defaultLayout: false
+  defaultLayout: false,
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true
+  }
 }));
 
 app.use(express.json());
@@ -63,6 +67,9 @@ app.get("/index", (req, res) => {
 // user routes
 app.post("/register", userController.registerUser);
 app.post("/login", userController.loginUser);
+app.get("/profile", isAuthenticated, (req, res) => {
+    res.redirect(`/profile/${req.session.user._id}`);
+});
 app.get("/profile/:id", isAuthenticated, userController.getUserProfile);
 app.post("/profile/:id/update", isAuthenticated, userController.updateUserProfile);
 app.get("/search", isAuthenticated, userController.searchUsers);
@@ -133,4 +140,5 @@ app.get("/home", isAuthenticated, async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
+
 });
