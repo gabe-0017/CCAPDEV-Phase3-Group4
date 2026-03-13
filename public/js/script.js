@@ -150,3 +150,28 @@ viewBtns.forEach(btn => btn.addEventListener("click", async () => {
 }));
 
 if (closeDetails) closeDetails.addEventListener("click", () => { viewDetailsModal.style.display = "none"; });
+
+/* delete account (modal) */
+const deleteModal = document.getElementById("deleteModal");
+const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+const cancelDelete = document.getElementById("cancelDelete");
+const confirmDelete = document.getElementById("confirmDelete");
+
+if (deleteAccountBtn) deleteAccountBtn.addEventListener("click", () => {
+    deleteModal.style.display = "flex";
+});
+
+if (cancelDelete) cancelDelete.addEventListener("click", () => {
+    deleteModal.style.display = "none";
+});
+
+if (confirmDelete) confirmDelete.addEventListener("click", async () => {
+    try {
+        const res = await fetch("/deleteAccount", { method: "DELETE" });
+        if (res.ok) window.location.href = "/";
+        else alert("Error deleting account. Please try again.");
+    } catch (err) {
+        console.error(err);
+        alert("Delete error.");
+    }
+});
