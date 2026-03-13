@@ -1,5 +1,5 @@
 1. Go to the directory of this folder in cmd/terminal
-2. Install express (and mongoose, in case needed later)
+2. Install Dependencies
    - npm init -y
    - npm install express mongoose express-handlebars express-session
 3. Run Program
