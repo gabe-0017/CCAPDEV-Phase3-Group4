@@ -61,7 +61,6 @@ exports.getReservations = async (req, res) => {
             labs, 
             labsJSON: JSON.stringify(labs)
         });
-
     } catch (error) {
         console.error(error);
         res.status(500).send("Error retrieving reservations.");
@@ -73,7 +72,7 @@ exports.cancelReservation = async (req, res) => {
     try {
         const { id } = req.params;
         await Reservation.findByIdAndUpdate(id, { status: "Cancelled" });
-        res.redirect("/manage");
+        return res.json({ success: true });
     } catch (error) {
         console.error(error);
         res.status(500).send("Error cancelling reservation.");
@@ -111,7 +110,7 @@ exports.editReservation = async (req, res) => {
             purpose
         });
 
-        res.redirect("/manage");
+        return res.json({ success: true });
     } catch (error) {
         console.error(error);
         res.status(500).send("Error updating reservation.");
