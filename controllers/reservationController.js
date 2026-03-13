@@ -54,7 +54,14 @@ exports.getReservations = async (req, res) => {
             .populate("userId")
             .populate("lab");
 
-        res.render("manage", { reservations });
+        const labs = await Lab.find();
+
+        res.render("manage", { 
+            reservations, 
+            labs, 
+            labsJSON: JSON.stringify(labs)
+        });
+
     } catch (error) {
         console.error(error);
         res.status(500).send("Error retrieving reservations.");
