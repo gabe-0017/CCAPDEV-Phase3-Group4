@@ -106,3 +106,17 @@ exports.searchUsers = async (req, res) => {
         res.status(500).send("Search error.");
     }
 };
+
+
+exports.deleteAccount = async (req, res) => {
+    try {
+        const userId = req.session.user._id;
+        await User.findByIdAndDelete(userId);
+        req.session.destroy((err) => {
+            if (err) return res.status(500).json({ error: "Error deleting account." });
+            res.status(200).json({ message: "Account deleted." });
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Error deleting account." });
+    }
+};
