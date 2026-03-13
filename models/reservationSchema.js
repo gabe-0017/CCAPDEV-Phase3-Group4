@@ -40,6 +40,6 @@ const reservationSchema = new mongoose.Schema({
         enum: ["Pending", "Approved", "Cancelled"],
         default: "Pending"
     }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Reservation", reservationSchema);
