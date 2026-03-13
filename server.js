@@ -25,6 +25,7 @@ app.engine("handlebars", exphbs.engine({
   extname: "handlebars",
   helpers: { eq: (a, b) => a === b },
   defaultLayout: false,
+  partialsDir: path.join(__dirname, "views/modals"),
   runtimeOptions: {
     allowProtoPropertiesByDefault: true,
     allowProtoMethodsByDefault: true
@@ -93,13 +94,7 @@ app.get("/logout", (req, res) => {
 });
 
 // delete account route
-app.delete("/deleteAccount", isAuthenticated, async (req, res) => {
-    try {
-        res.redirect("/index.html");
-    } catch (error) {
-        res.status(500).send("Error deleting account.");
-    }
-});
+app.delete("/deleteAccount", isAuthenticated, userController.deleteAccount);
 
 // lab routes
 app.get("/labs", isAuthenticated, labController.getLabs);
