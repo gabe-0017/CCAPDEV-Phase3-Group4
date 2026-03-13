@@ -21,7 +21,15 @@ mongoose.connect('mongodb://localhost:27017/labreserve')
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error('MongoDB Error:', err));
 
-app.engine('handlebars', hbs.engine);
+app.engine("handlebars", exphbs.engine({
+  extname: "handlebars",
+  helpers: { eq: (a, b) => a === b },
+  defaultLayout: false,
+  runtimeOptions: {
+    allowProtoPropertiesByDefault: true,
+    allowProtoMethodsByDefault: true
+  }
+}));
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -64,6 +72,9 @@ app.get("/index", (req, res) => {
 // user routes
 app.post("/register", userController.registerUser);
 app.post("/login", userController.loginUser);
+app.get("/profile", isAuthenticated, (req, res) => {
+    res.redirect(`/profile/${req.session.user._id}`);
+});
 app.get("/profile/:id", isAuthenticated, userController.getUserProfile);
 app.post("/profile/:id/update", isAuthenticated, userController.updateUserProfile);
 app.get("/search", isAuthenticated, userController.searchUsers);
@@ -198,3 +209,4 @@ app.get("/seed-labs", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
+
