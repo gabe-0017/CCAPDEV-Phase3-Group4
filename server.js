@@ -189,7 +189,7 @@ app.get("/seed-labs", async (req, res) => {
                 seats: generateSeats()
             },
             {
-                lab: "Lab 103 - AI Laboratory",
+                lab: "Lab 105 - AI Laboratory",
                 seats: generateSeats()
             }
         ];
@@ -221,4 +221,3 @@ app.get("/delete-labs", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
-
