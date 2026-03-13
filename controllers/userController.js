@@ -22,6 +22,13 @@ exports.registerUser = async (req, res) => {
 
         await newUser.save();
 
+        // Store user in session
+        req.session.user = {
+            _id: newUser._id,
+            username: newUser.username,
+            role: newUser.role
+        };
+
         res.redirect("/home");
 
     } catch (error) {
@@ -41,7 +48,7 @@ exports.loginUser = async (req, res) => {
 
         // Store user in session
         req.session.user = {
-            id: user._id,
+            _id: user._id,
             username: user.username,
             role: user.role
         };
