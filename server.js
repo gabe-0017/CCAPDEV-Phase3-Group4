@@ -3,6 +3,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const exphbs = require("express-handlebars");
 const session = require("express-session");
+const hbs = exphbs.create({
+  extname: 'handlebars',
+  helpers: { eq: (a, b) => a === b },
+  defaultLayout: false
+});
 
 const app = express();
 const PORT = 3000;
@@ -16,17 +21,9 @@ mongoose.connect('mongodb://localhost:27017/labreserve')
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error('MongoDB Error:', err));
 
-app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "views"));
-app.engine("handlebars", exphbs.engine({
-  extname: "handlebars",
-  helpers: { eq: (a, b) => a === b },
-  defaultLayout: false,
-  runtimeOptions: {
-    allowProtoPropertiesByDefault: true,
-    allowProtoMethodsByDefault: true
-  }
-}));
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -67,9 +64,6 @@ app.get("/index", (req, res) => {
 // user routes
 app.post("/register", userController.registerUser);
 app.post("/login", userController.loginUser);
-app.get("/profile", isAuthenticated, (req, res) => {
-    res.redirect(`/profile/${req.session.user._id}`);
-});
 app.get("/profile/:id", isAuthenticated, userController.getUserProfile);
 app.post("/profile/:id/update", isAuthenticated, userController.updateUserProfile);
 app.get("/search", isAuthenticated, userController.searchUsers);
@@ -99,6 +93,16 @@ app.delete("/deleteAccount", isAuthenticated, async (req, res) => {
 // lab routes
 app.get("/labs", isAuthenticated, labController.getLabs);
 app.post("/labs/create", isAuthenticated, labController.createLab);
+app.get("/labs/:id", isAuthenticated, async (req, res) => {
+  try {
+    const Lab = require("./models/labSchema");
+    const lab = await Lab.findById(req.params.id).populate("lab_tech");
+    if (!lab) return res.status(404).json({ error: "Lab not found" });
+    res.json(lab);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // reservation routes
 app.post("/reserve", isAuthenticated, reservationController.createReservation);
@@ -138,7 +142,59 @@ app.get("/home", isAuthenticated, async (req, res) => {
     }
 });
 
+// seed labs
+app.get("/seed-labs", async (req, res) => {
+    try {
+        const Lab = require("./models/labSchema");
+        
+        // check if labs already exist
+        const labCount = await Lab.countDocuments();
+        if (labCount > 0) {
+            return res.send(`
+                <h2>${labCount} labs already exist!</h2>
+            `);
+        }
+        
+        // create seats A1-F6
+        const generateSeats = () => {
+            const seats = [];
+            const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+            rows.forEach(row => {
+                for (let i = 1; i <= 6; i++) {
+                    seats.push({ seatNumber: `${row}${i}` });
+                }
+            });
+            return seats;
+        };
+        
+        // create 3 distinct labs
+        const labs = [
+            {
+                lab: "Lab 101 - Programming Lab",
+                seats: generateSeats()
+            },
+            {
+                lab: "Lab 102 - Networking Lab", 
+                seats: generateSeats()
+            },
+            {
+                lab: "Lab 103 - Multimedia Lab",
+                seats: generateSeats()
+            }
+        ];
+        
+        await Lab.insertMany(labs);
+        res.send(`
+            <h2>3 Labs Created Successfully!</h2>
+            <p><strong>Lab 101</strong> - Programming (72 seats)</p>
+            <p><strong>Lab 102</strong> - Networking (72 seats)</p>
+            <p><strong>Lab 103</strong> - Multimedia (72 seats)</p>
+        `);
+    } catch (error) {
+        res.status(500).send("Seeding error: " + error.message);
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
-
 });
