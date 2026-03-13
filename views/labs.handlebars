@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Our Laboratories</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+
+<body class="bg">
+
+  <header>
+    <nav class="navbar">
+      <a class="logo" href="/home">LabReserve.</a>
+
+      <ul class="nav-links">
+        <li><a href="/labs">Laboratories</a></li>
+        <li><a href="/reservation">Reserve</a></li>
+        <li><a href="/manage">Manage</a></li>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <h2>Laboratory Slot Availability</h2>
+    <p class="subtitle">Select a laboratory to view available seats.</p>
+
+    <div>
+      <select class="lab-select" id="labSelect">
+        <option value="">Choose a lab...</option>
+
+        {{#each labs}}
+          <option value="{{this._id}}">
+            {{this.lab}}
+          </option>
+        {{/each}}
+
+      </select>
+    </div>
+
+    <div class="seat-map">
+
+      <div class="screen">Black/White Board</div>
+
+      <div class="seat-grid" id="seatGrid">
+
+        {{#if labs}}
+
+          {{#each labs.[0].seats}}
+
+            <div class="seat {{#if (eq this.status "Reserved")}}reserved{{/if}}">
+              {{this.seatNumber}}
+            </div>
+
+          {{/each}}
+
+        {{else}}
+
+          <p>No laboratories available.</p>
+
+        {{/if}}
+
+      </div>
+
+      <div class="legend">
+        <span class="seat-legend"></span> Available
+        <span class="seat-legend reserved"></span> Reserved
+      </div>
+
+      <div id="seatReservationPanel" class="seat-reservation-panel" style="display:none;">
+
+        <h3 id="reservationPanelTitle">
+          Select a seat to view slot availability
+        </h3>
+
+        <div class="reservation-controls">
+          <label for="reservationDate">Choose Date</label>
+          <input type="date" id="reservationDate" />
+        </div>
+
+        <div id="reservationTimeslots" class="reservation-timeslots">
+          <p class="hint">
+            Select a seat and date to see available time slots.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="/js/script.js"></script>
+
+</body>
+</html>

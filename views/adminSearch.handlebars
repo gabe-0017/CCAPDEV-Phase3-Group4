@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Search</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+
+  <body class="bg">
+    <header>
+      <nav class="navbar">
+        <a class="logo" href="/home">LabReserve.</a>
+
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/labs">Laboratories</a></li>
+          <li><a href="/reservation">Reserve</a></li>
+          <li><a href="/manage">Manage</a></li>
+          <li><a href="/profile/{{user._id}}">Profile</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container">
+      <h2>Student Reservation Lookup</h2>
+      <p class="subtitle">Search for students and view their reservation history.</p>
+      
+      <div class="form-card">
+        <form id="searchForm" method="GET" action="/search">
+          <div class="form-group" id="studentEmail">
+            <label>Student Account Email</label>
+            <input type="email" name="username" required />
+          </div>
+      
+          <button type="submit" class="btn-large">Search</button>
+        </form>
+      </div>
+
+      <!-- search results -->
+      {{#if users}}
+        <div class="search-results">
+          {{#each users}}
+            <div class="user-card">
+              <p>{{this.fullname}} ({{this.email}})</p>
+              <!-- list reservations -->
+              {{#if this.reservations}}
+                <ul>
+                  {{#each this.reservations}}
+                    <li>{{this.lab.lab}} - {{this.seat}} on {{this.date}} ({{this.status}})</li>
+                  {{/each}}
+                </ul>
+              {{/if}}
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+    </main>
+
+    <script src="/js/script.js"></script>
+  </body>
+</html>

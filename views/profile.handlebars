@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Your Profile</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+
+  <body class="bg">
+    <header>
+      <nav class="navbar">
+        <a class="logo" href="home">LabReserve.</a>
+
+        <ul class="nav-links" id="navLinks">
+          <li><a href="labs">Laboratories</a></li>
+          <li><a href="reservation">Reserve</a></li>
+          <li><a href="manage">Manage</a></li>
+          <li><a href="profile/{{user._id}}">Profile</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container">
+      <h2>My Profile</h2>
+      <p class="subtitle">View or update your account information.</p>
+
+      <div class="form-card">
+        <form method="POST" action="/profile/{{user._id}}/update">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="fullname" value="{{user.fullname}}" />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{user.email}}" />
+          </div>
+
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" value="{{user.username}}" />
+          </div>
+
+          <div class="form-group">
+            <label>Role</label>
+            <input type="text" value="{{user.role}}" disabled />
+          </div>
+
+          <div style="display:flex; gap:15px;">
+            <button type="submit" class="btn-cancel-modal">Save Changes</button>
+            <button type="button" id="deleteAccountBtn" class="btn-confirm-modal">Delete Account</button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script src="/js/script.js"></script>
+  </body>
+</html>

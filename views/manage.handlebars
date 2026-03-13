@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Reservations</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+
+<body class="bg">
+  
+  <header>
+    <nav class="navbar">
+
+      <a class="logo" href="/home">LabReserve.</a>
+
+      <ul class="nav-links">
+        <li><a href="/labs">Laboratories</a></li>
+        <li><a href="/reservation">Reserve</a></li>
+        <li><a href="/manage">Manage</a></li>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      </ul>
+
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <h2>Manage Reservations</h2>
+    <p class="subtitle">
+      View, edit, or cancel your current seat reservation/s.
+    </p>
+
+    <div class="manage-container">
+
+      {{#each reservations}}
+
+        <div class="reservation-card">
+
+          <div class="reservation-header">
+
+            <h3>
+              {{lab}} - Seat {{seat}}
+            </h3>
+
+            <span class="status-badge {{status}}">
+              {{status}}
+            </span>
+
+          </div>
+
+          <div class="reservation-details">
+
+            <div class="detail-item">
+              <span class="detail-label">Date:</span>
+              <span class="detail-value">{{date}}</span>
+            </div>
+
+            <div class="detail-item">
+              <span class="detail-label">Time:</span>
+              <span class="detail-value">{{time}}</span>
+            </div>
+
+          </div>
+
+          <div class="reservation-actions">
+
+            {{#if (eq status "Pending")}}
+
+              <button class="btn btn-edit" data-id="{{_id}}">
+                Edit
+              </button>
+
+              <button class="btn btn-cancel" data-id="{{_id}}">
+                Cancel
+              </button>
+
+            {{/if}}
+
+            <button class="btn btn-view" data-id="{{_id}}">
+              View Details
+            </button>
+
+          </div>
+
+        </div>
+
+      {{/each}}
+
+    </div>
+
+  </main>
+
+<script src="/js/script.js"></script>
+
+  </body>
+
+</html>
