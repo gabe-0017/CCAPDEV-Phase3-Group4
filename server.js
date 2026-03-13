@@ -21,15 +21,7 @@ mongoose.connect('mongodb://localhost:27017/labreserve')
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.error('MongoDB Error:', err));
 
-app.engine("handlebars", exphbs.engine({
-  extname: "handlebars",
-  helpers: { eq: (a, b) => a === b },
-  defaultLayout: false,
-  runtimeOptions: {
-    allowProtoPropertiesByDefault: true,
-    allowProtoMethodsByDefault: true
-  }
-}));
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -72,9 +64,6 @@ app.get("/index", (req, res) => {
 // user routes
 app.post("/register", userController.registerUser);
 app.post("/login", userController.loginUser);
-app.get("/profile", isAuthenticated, (req, res) => {
-    res.redirect(`/profile/${req.session.user._id}`);
-});
 app.get("/profile/:id", isAuthenticated, userController.getUserProfile);
 app.post("/profile/:id/update", isAuthenticated, userController.updateUserProfile);
 app.get("/search", isAuthenticated, userController.searchUsers);
@@ -157,15 +146,7 @@ app.get("/home", isAuthenticated, async (req, res) => {
 app.get("/seed-labs", async (req, res) => {
     try {
         const Lab = require("./models/labSchema");
-        
-        // check if labs already exist
-        const labCount = await Lab.countDocuments();
-        if (labCount > 0) {
-            return res.send(`
-                <h2>${labCount} labs already exist!</h2>
-            `);
-        }
-        
+                
         // create seats A1-F6
         const generateSeats = () => {
             const seats = [];
@@ -178,35 +159,54 @@ app.get("/seed-labs", async (req, res) => {
             return seats;
         };
         
-        // create 3 distinct labs
+        // create 5 labs
         const labs = [
             {
-                lab: "Lab 101 - Programming Lab",
+                lab: "Lab 101 - Programming Laboratory",
                 seats: generateSeats()
             },
             {
-                lab: "Lab 102 - Networking Lab", 
+                lab: "Lab 102 - Networking Laboratory", 
                 seats: generateSeats()
             },
             {
-                lab: "Lab 103 - Multimedia Lab",
+                lab: "Lab 103 - Cybersecurity Laboratory",
+                seats: generateSeats()
+            },
+            {
+                lab: "Lab 104 - Multimedia Laboratory",
+                seats: generateSeats()
+            },
+            {
+                lab: "Lab 103 - AI Laboratory",
                 seats: generateSeats()
             }
         ];
         
         await Lab.insertMany(labs);
         res.send(`
-            <h2>3 Labs Created Successfully!</h2>
+            <h2>5 Labs Created Successfully!</h2>
             <p><strong>Lab 101</strong> - Programming (72 seats)</p>
             <p><strong>Lab 102</strong> - Networking (72 seats)</p>
-            <p><strong>Lab 103</strong> - Multimedia (72 seats)</p>
+            <p><strong>Lab 103</strong> - Cybersecurity (72 seats)</p>
+            <p><strong>Lab 104</strong> - Multimedia (72 seats)</p>
+            <p><strong>Lab 105</strong> - AI (72 seats)</p>
         `);
     } catch (error) {
         res.status(500).send("Seeding error: " + error.message);
     }
 });
 
+app.get("/delete-labs", async (req, res) => {
+    try {
+        const Lab = require("./models/labSchema");
+        const result = await Lab.deleteMany({});
+        res.send(`${result.deletedCount} labs deleted.`);
+    } catch (error) {
+        res.status(500).send("Error deleting labs: " + error.message);
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
-
