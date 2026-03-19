@@ -62,24 +62,28 @@ exports.loginUser = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
     try {
         const { id } = req.params;
-        const updates = req.body;
+        const updates = { ...req.body }; // copy all fields
         
-        // new password (double verification - password mismatch)
-        if (updates.password) {
-            const confirmPassword = req.body.confirmPassword;
-            if (updates.password !== confirmPassword) {
+        // new password (double verification)
+        const newPassword = req.body.newPassword;
+        const confirmPassword = req.body.confirmPassword;
+        
+        if (newPassword) {
+            if (newPassword !== confirmPassword) {
                 return res.status(400).send("Passwords do not match.");
             }
-            // remove confirmPassword from updates
-            delete updates.confirmPassword;
+            updates.password = newPassword;
         } else {
-            // remove password if not provided
             delete updates.password;
+            delete updates.newPassword;
+            delete updates.confirmPassword;
         }
         
         await User.findByIdAndUpdate(id, updates);
+        req.session.user = { ...req.session.user, ...updates }; // update session
         res.redirect(`/profile/${id}`);
     } catch (error) {
+        console.error("Profile update error:", error);
         res.status(500).send("Error updating profile.");
     }
 };
