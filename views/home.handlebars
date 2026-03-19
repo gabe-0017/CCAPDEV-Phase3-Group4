@@ -13,10 +13,10 @@
       <p class="italics">Select a feature to continue</p>
 
       <div class="portal-grid">
-        <!-- admin-only feature -->
+
         {{#if (eq user.role "Lab Technician")}}
-          <a href="/adminSearch" class="portal-card"> 
-            <h2>Search</h2>
+          <li><a href="/search">Search</a></li>
+            <h2>Search</h2> <!-- admin-only feature -->
             <p>Search and view students' reservations.</p>
           </a>
         {{/if}}
@@ -48,8 +48,8 @@
       </div>
     </div>
 
-    
-    {{> logout}}
     <script src="/js/script.js"></script>
+
+    {{> logout}}
   </body>
 </html>
