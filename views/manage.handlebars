@@ -30,7 +30,12 @@
 
   <main class="container">
 
-    {{#if isAdmin}}
+    {{#if viewingStudent}}
+      <h2>{{viewingStudent}}'s Reservations</h2>
+      <p class="subtitle">
+          <a href="/manage" style="color: #087830;">View all reservations</a>
+      </p>
+    {{else if isAdmin}}
       <h2>Manage Reservations</h2>
       <p class="subtitle">
         Manage students' reservations.
