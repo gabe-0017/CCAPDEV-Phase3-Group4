@@ -54,14 +54,17 @@ exports.getReservations = async (req, res) => {
         const LabModel = require("../models/labSchema");
         const labs = await LabModel.find();
 
-        if (req.session.user.role === "Lab Technician") {
-            // admin view: sees all reservations
+        if (req.session.user.role === "Lab Technician" && req.query.userId) {
+            // Admin viewing specific student
+            return exports.getStudentReservations(req, res);
+        } else if (req.session.user.role === "Lab Technician") {
+            // Admin sees all reservations
             reservations = await Reservation.find({})
                 .populate("userId")
                 .populate("lab")
                 .sort({ createdAt: -1 });
         } else {
-            // student view: only sees their reservations
+            // Student sees own reservations
             reservations = await Reservation.find({ userId: req.session.user._id })
                 .populate("userId")
                 .populate("lab")
@@ -73,6 +76,34 @@ exports.getReservations = async (req, res) => {
             labs, 
             labsJSON: JSON.stringify(labs),
             isAdmin: req.session.user.role === "Lab Technician"
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error retrieving reservations.");
+    }
+};
+
+// get a specific student's reservations (for admin's search feature)
+exports.getStudentReservations = async (req, res) => {
+    try {
+        const studentId = req.studentUserId;
+        const LabModel = require("../models/labSchema");
+        const labs = await LabModel.find();
+
+        const reservations = await Reservation.find({ userId: studentId })
+            .populate("userId")
+            .populate("lab")
+            .sort({ createdAt: -1 });
+
+        const student = await require("../models/userSchema").findById(studentId);
+
+        res.render("manage", { 
+            reservations, 
+            labs, 
+            labsJSON: JSON.stringify(labs),
+            isAdmin: true,
+            viewingStudent: student.fullname,
+            studentId: studentId
         });
     } catch (error) {
         console.error(error);
