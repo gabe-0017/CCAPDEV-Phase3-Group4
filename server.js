@@ -73,14 +73,20 @@ app.get("/index", (req, res) => {
 // user routes
 app.post("/register", userController.registerUser);
 app.post("/login", userController.loginUser);
+app.get("/profile/:id", isAuthenticated, userController.getUserProfile);
 app.get("/profile", isAuthenticated, (req, res) => {
     res.redirect(`/profile/${req.session.user._id}`);
 });
-app.get("/profile/:id", isAuthenticated, userController.getUserProfile);
 app.post("/profile/:id/update", isAuthenticated, userController.updateUserProfile);
-app.get("/search", isAuthenticated, userController.searchUsers);
 app.get("/register", (req, res) => {
     res.render("register");
+});
+app.get("/search", isAuthenticated, userController.searchUsers); // admin user feature (adminSearch)
+app.get("/adminSearch", isAuthenticated, (req, res) => {
+    if (req.session.user.role !== "Lab Technician") {
+        return res.redirect("/home");
+    }
+    res.render("adminSearch");
 });
 
 // logout route
@@ -203,6 +209,7 @@ app.get("/seed-labs", async (req, res) => {
     }
 });
 
+// for debugging only
 app.get("/delete-labs", async (req, res) => {
     try {
         const Lab = require("./models/labSchema");
@@ -210,6 +217,36 @@ app.get("/delete-labs", async (req, res) => {
         res.send(`${result.deletedCount} labs deleted.`);
     } catch (error) {
         res.status(500).send("Error deleting labs: " + error.message);
+    }
+});
+
+// seed lab techs
+app.get("/seed-techs", async (req, res) => {
+    try {
+        const User = require("./models/userSchema");
+        const Lab = require("./models/labSchema");
+        
+        // create 5 lab techs
+        const techs = [
+            { fullname: "John Doe", email: "john_doe@dlsu.edu.com", username: "john_doe_123", password: "techpass_jd1", role: "Lab Technician" },
+            { fullname: "Jane Doe", email: "jane_doe@dlsu.edu.com", username: "jane_doe_321", password: "techpass_jd2", role: "Lab Technician" },
+            { fullname: "Clyde Barrow", email: "clyde_barrow@dlsu.edu.com", username: "clyde_barrow_456", password: "techpass_cb", role: "Lab Technician" },
+            { fullname: "Bonnie Parker", email: "bonnie_parker@dlsu.edu.com", username: "bonnie_parker_654", password: "techpass_bp", role: "Lab Technician" },
+            { fullname: "Elliot Alderson", email: "elliot_alderson@dlsu.edu.com", username: "samsepi0l", password: "techpass_ea", role: "Lab Technician" }
+        ];
+        
+        const createdTechs = await User.insertMany(techs);
+        
+        // assign to each lab
+        const labs = await Lab.find();
+        labs.forEach(async (lab, index) => {
+            lab.lab_tech = createdTechs[index % 5]._id;
+            await lab.save();
+        });
+        
+        res.send("5 Lab Technicians created and assigned to labs!");
+    } catch (error) {
+        res.status(500).send("Error: " + error.message);
     }
 });
 
