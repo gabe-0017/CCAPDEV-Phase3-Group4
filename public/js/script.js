@@ -52,27 +52,53 @@ if (registerForm) {
 }
 
 /* logout (modal) */
-const logoutModal = document.getElementById("logoutModal");
-const logoutBtn = document.getElementById("logoutBtn");
-const cancelLogout = document.getElementById("cancelLogout");
-const confirmLogout = document.getElementById("confirmLogout");
-const editLabSelect = document.getElementById("editLab");
-const editSeatSelect = document.getElementById("editSeat");
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById("logoutBtn");
+    const logoutModal = document.getElementById("logoutModal");
+    const cancelLogout = document.getElementById("cancelLogout");
+    const confirmLogout = document.getElementById("confirmLogout");
 
-if (logoutBtn) logoutBtn.addEventListener("click", (e) => { e.preventDefault(); logoutModal.style.display = "flex"; });
-if (cancelLogout) cancelLogout.addEventListener("click", () => { logoutModal.style.display = "none"; });
-if (confirmLogout) confirmLogout.addEventListener("click", async () => {
-    try {
-        const res = await fetch("/logout", { method: "GET" });
-        if (res.ok) window.location.href = "/";
-        else alert(await res.text());
-    } catch (err) {
-        console.error(err);
-        alert("Logout error.");
+    // show modal
+    if (logoutBtn && logoutModal) {
+        logoutBtn.addEventListener("click", (e) => { 
+            e.preventDefault(); 
+            logoutModal.style.display = "flex"; 
+        });
+    }
+
+    // hide modal ('no' clicked)
+    if (cancelLogout && logoutModal) {
+        cancelLogout.addEventListener("click", () => { 
+            logoutModal.style.display = "none"; 
+        });
+    }
+
+    // confirm logout ('yes' clicked)
+    if (confirmLogout) {
+        confirmLogout.addEventListener("click", async () => {
+            try {
+                const res = await fetch("/logout", { method: "GET" });
+                if (res.ok) {
+                    window.location.href = "/";
+                } else {
+                    alert(await res.text() || "Logout failed");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Logout error. Please try again.");
+            }
+        });
+    }
+
+    // close modal
+    if (logoutModal) {
+        logoutModal.addEventListener("click", (e) => {
+            if (e.target === logoutModal) {
+                logoutModal.style.display = "none";
+            }
+        });
     }
 });
-
-
 
 /* edit reservation (modal) */
 const editModal = document.getElementById("editModal");
