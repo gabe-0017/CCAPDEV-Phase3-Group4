@@ -189,8 +189,8 @@ app.get("/home", isAuthenticated, async (req, res) => {
 app.get("/seed-labs", async (req, res) => {
     try {
         const Lab = require("./models/labSchema");
-                
-        // create seats A1-F6
+        
+        // generate 36 seats per lab
         const generateSeats = () => {
             const seats = [];
             const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -201,39 +201,27 @@ app.get("/seed-labs", async (req, res) => {
             });
             return seats;
         };
-        
+
         // create 5 labs
         const labs = [
-            {
-                lab: "Lab 101 - Programming Laboratory",
-                seats: generateSeats()
-            },
-            {
-                lab: "Lab 102 - Networking Laboratory", 
-                seats: generateSeats()
-            },
-            {
-                lab: "Lab 103 - Cybersecurity Laboratory",
-                seats: generateSeats()
-            },
-            {
-                lab: "Lab 104 - Multimedia Laboratory",
-                seats: generateSeats()
-            },
-            {
-                lab: "Lab 105 - AI Laboratory",
-                seats: generateSeats()
-            }
+            { lab: "Lab 101 - Programming Laboratory", seats: generateSeats() },
+            { lab: "Lab 102 - Networking Laboratory", seats: generateSeats() },
+            { lab: "Lab 103 - Cybersecurity Laboratory", seats: generateSeats() },
+            { lab: "Lab 104 - Multimedia Laboratory", seats: generateSeats() },
+            { lab: "Lab 105 - AI Laboratory", seats: generateSeats() }
         ];
         
+        await Lab.deleteMany({});
         await Lab.insertMany(labs);
+        
         res.send(`
-            <h2>5 Labs Created Successfully!</h2>
-            <p><strong>Lab 101</strong> - Programming (72 seats)</p>
-            <p><strong>Lab 102</strong> - Networking (72 seats)</p>
-            <p><strong>Lab 103</strong> - Cybersecurity (72 seats)</p>
-            <p><strong>Lab 104</strong> - Multimedia (72 seats)</p>
-            <p><strong>Lab 105</strong> - AI (72 seats)</p>
+            <h2>5 Labs Created (36 seats each)!</h2>
+            <p>Lab 101 - Programming (A1-F6)</p>
+            <p>Lab 102 - Networking (A1-F6)</p>
+            <p>Lab 103 - Cybersecurity (A1-F6)</p>
+            <p>Lab 104 - Multimedia (A1-F6)</p>
+            <p>Lab 105 - AI (A1-F6)</p>
+            <a href="/home" class="btn">Go Home</a>
         `);
     } catch (error) {
         res.status(500).send("Seeding error: " + error.message);
