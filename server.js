@@ -43,7 +43,7 @@ app.use(session({
     secret: "apdev-mco2-grp4",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } // set to true if using HTTPS
+    cookie: { secure: false }
 }));
 
 // pass user data to all views
@@ -60,17 +60,17 @@ const isAuthenticated = (req, res, next) => {
     res.redirect("/");
 };
 
-// root route (login page)
-app.get("/", (req, res) => {
-    res.redirect("/index");
-});
-
 // login page render
 app.get("/index", (req, res) => {
     res.render("index");
 });
 
-// user routes
+// root route (login page)
+app.get("/", (req, res) => {
+    res.redirect("/index");
+});
+
+// general-user routes (student/admin)
 app.post("/register", userController.registerUser);
 app.post("/login", userController.loginUser);
 app.get("/profile/:id", isAuthenticated, userController.getUserProfile);
@@ -81,12 +81,36 @@ app.post("/profile/:id/update", isAuthenticated, userController.updateUserProfil
 app.get("/register", (req, res) => {
     res.render("register");
 });
-app.get("/search", isAuthenticated, userController.searchUsers); // admin user feature (adminSearch)
+
+// admin-user routes (admin-only)
 app.get("/adminSearch", isAuthenticated, (req, res) => {
     if (req.session.user.role !== "Lab Technician") {
         return res.redirect("/home");
     }
     res.render("adminSearch");
+});
+app.post("/adminSearch", isAuthenticated, async (req, res) => {
+    if (req.session.user.role !== "Lab Technician") {
+        return res.redirect("/home");
+    }
+    
+    try {
+        const { email } = req.body;
+        const User = require("./models/userSchema");
+        
+        const student = await User.findOne({ 
+            email: { $regex: email, $options: "i" },
+            role: "Student" 
+        });
+        
+        if (!student) {
+            return res.render("adminSearch", { error: "Student not found." });
+        }
+        
+        res.redirect(`/manage?userId=${student._id}`);
+    } catch (error) {
+        res.status(500).render("adminSearch", { error: "Search error." });
+    }
 });
 
 // logout route
@@ -216,7 +240,7 @@ app.get("/seed-labs", async (req, res) => {
     }
 });
 
-// for debugging only
+// delete labs (for debugging)
 app.get("/delete-labs", async (req, res) => {
     try {
         const Lab = require("./models/labSchema");
@@ -233,6 +257,8 @@ app.get("/seed-techs", async (req, res) => {
         const User = require("./models/userSchema");
         const Lab = require("./models/labSchema");
         
+        await User.deleteMany({ role: "Lab Technician" });
+        
         // create 5 lab techs
         const techs = [
             { fullname: "John Doe", email: "john_doe@dlsu.edu.com", username: "john_doe_123", password: "techpass_jd1", role: "Lab Technician" },
@@ -244,14 +270,18 @@ app.get("/seed-techs", async (req, res) => {
         
         const createdTechs = await User.insertMany(techs);
         
-        // assign to each lab
+        // get all labs and assign techs
         const labs = await Lab.find();
-        labs.forEach(async (lab, index) => {
-            lab.lab_tech = createdTechs[index % 5]._id;
-            await lab.save();
-        });
+        for (let i = 0; i < labs.length; i++) {
+            labs[i].lab_tech = createdTechs[i % createdTechs.length]._id;
+            await labs[i].save();
+        }
         
-        res.send("5 Lab Technicians created and assigned to labs!");
+        res.send(`
+            <h2>5 Lab Technicians created & assigned!</h2>
+            <p>Lab Techs assigned to ${labs.length} labs.</p>
+            <a href="/home" class="btn">Go Home</a>
+        `);
     } catch (error) {
         res.status(500).send("Error: " + error.message);
     }
