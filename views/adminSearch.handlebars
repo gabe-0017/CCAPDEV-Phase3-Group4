@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>User Search</title>
+    <title>Student Lookup</title>
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
 
@@ -12,11 +12,10 @@
         <a class="logo" href="/home">LabReserve.</a>
         <ul class="nav-links">
           {{#if (eq user.role "Lab Technician")}}
-            <li><a href="/search">Search</a></li>
+            <li><a href="/adminSearch">Search</a></li>
           {{/if}}
           <li><a href="/labs">Laboratories</a></li>
-          <li><a href="/reservation">Reserve</a></li>
-          <li><a href="/manage">Manage</a></li>
+          <li><a href="/manage">All Reservations</a></li>
           <li><a href="/profile/{{user._id}}">Profile</a></li>
           <li><a href="#" id="logoutBtn">Logout</a></li>
         </ul>
@@ -25,52 +24,25 @@
 
     <main class="container">
       <h2>Student Reservation Lookup</h2>
-      <p class="subtitle">Search students by email to view/manage their reservations.</p>
+      <p class="subtitle">Enter student email to view/manage their reservations.</p>
       
-      <div class="form-card">
-        <form id="searchForm">
+      <div class="form-card" style="max-width: 450px;">
+        <form method="POST" action="/adminSearch">
           <div class="form-group">
-            <label>Search by Email</label>
-            <input type="email" name="email" id="searchInput" placeholder="Enter student email..." required />
+            <label>Student Email</label>
+            <input type="email" name="email" id="searchInput" 
+                   placeholder="student@dlsu.edu.ph" required 
+                   style="font-size: 16px;" />
           </div>
-          <button type="submit" class="btn-large">Search</button>
+          <button type="submit" class="btn-large">View Reservations</button>
         </form>
       </div>
 
-      <!-- Search results -->
-      {{#if users}}
-        <div class="search-results">
-          {{#each users}}
-            <div class="search-results-card">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <div>
-                  <h3>{{this.fullname}}</h3>
-                  <p><strong>Email:</strong> {{this.email}}</p>
-                </div>
-                <a href="/manage?userId={{this._id}}" class="btn">View/Manage Reservations</a>
-              </div>
-              
-              {{#if this.reservations.length}}
-                <h5>Recent Reservations:</h5>
-                <div class="slots-grid">
-                  {{#each this.reservations}}
-                    <div class="slot-card {{#if (eq status "Pending")}}available{{/if}}">
-                      <div class="slot-time">{{date}} {{start_time}} - {{end_time}}</div>
-                      <div class="slot-info">
-                        <p><strong>{{../lab.lab}} - {{seat}}</strong></p>
-                        <p>Status: <span class="status-badge {{status.toLowerCase()}}">{{status}}</span></p>
-                      </div>
-                    </div>
-                  {{/each}}
-                </div>
-              {{else}}
-                <p style="color: #666; font-style: italic;">No reservations found.</p>
-              {{/if}}
-            </div>
-          {{/each}}
+      {{#if error}}
+        <div class="form-card" style="background: #fee; color: #c33; border-left: 4px solid #f66;">
+          <p><strong>{{error}}</strong></p>
+          <p style="font-size: 14px;">Make sure the email exists and belongs to a Student account.</p>
         </div>
-      {{else}}
-        <p class="subtitle">No results found. Try a different email.</p>
       {{/if}}
     </main>
 
