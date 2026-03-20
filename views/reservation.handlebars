@@ -97,27 +97,34 @@
     <script>
       const labSelect = document.getElementById('labSelect');
       const seatSelect = document.getElementById('seatSelect');
-
+    
       labSelect.addEventListener('change', async () => {
         const labId = labSelect.value;
-
-        seatSelect.innerHTML = '<option disabled selected>Select a seat</option>';
-
+        seatSelect.innerHTML = '<option disabled selected>Loading seats...</option>';
+    
         if (!labId) return;
-
+    
         try {
-          const res = await fetch(`/labs/${labId}`);
-          const lab = await res.json();
-
-          lab.seats.forEach(seat => {
-            const option = document.createElement('option');
-            option.value = seat.seatNumber;
-            option.textContent = seat.seatNumber;
-            seatSelect.appendChild(option);
-          });
-
-        } catch (err) {
-          console.error('Error loading seats:', err);
+          const response = await fetch(`/labs/${labId}`);
+          if (!response.ok) throw new Error('Lab not found');
+          
+          const lab = await response.json();
+          
+          // Clear and populate seats
+          seatSelect.innerHTML = '<option disabled selected>Select a seat</option>';
+          
+          if (lab.seats && lab.seats.length > 0) {
+            lab.seats.forEach(seat => {
+              const option = document.createElement('option');
+              option.value = seat.seatNumber;
+              option.textContent = seat.seatNumber;
+              seatSelect.appendChild(option);
+            });
+          } else {
+            seatSelect.innerHTML = '<option disabled>No seats available</option>';
+          }
+        } catch (error) {
+          console.error('Error loading seats:', error);
           seatSelect.innerHTML = '<option disabled>Error loading seats</option>';
         }
       });
