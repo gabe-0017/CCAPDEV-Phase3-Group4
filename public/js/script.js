@@ -263,12 +263,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById("detailStatus").textContent = details.status;
                     document.getElementById("detailId").textContent = details._id || details.id;
                     document.getElementById("detailName").textContent = details.userId?.fullname || "";
+                    document.getElementById("detailPurpose").textContent = details.purpose || "Not specified";
                     document.getElementById("detailReserved").textContent = details.createdAt ? new Date(details.createdAt).toLocaleString() : "";
-                    document.getElementById("detailArrived").textContent = details.arrived ? new Date(details.arrived).toLocaleString() : "";
                     document.getElementById("detailDate").textContent = details.date;
                     document.getElementById("detailStartTime").textContent = details.start_time || "";
                     document.getElementById("detailEndTime").textContent = details.end_time || "";
-                    document.getElementById("detailTech").textContent = details.lab?.lab_tech?.fullname || "Not assigned";
+                    document.getElementById("detailTech").textContent = details.lab_tech?.fullname || details.lab?.lab_tech?.fullname || "Not assigned";
                 } else {
                     alert(await res.text());
                 }
