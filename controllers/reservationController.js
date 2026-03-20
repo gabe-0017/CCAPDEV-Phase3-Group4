@@ -10,6 +10,10 @@ exports.createReservation = async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).send("User not found.");
 
+        // get lab w/ technician
+        const labDoc = await Lab.findById(lab).populate('lab_tech');
+        if (!labDoc) return res.status(404).send("Lab not found.");
+
         // check for overlapping reservation
         const existingReservation = await Reservation.findOne({
             lab,
@@ -17,7 +21,7 @@ exports.createReservation = async (req, res) => {
             date,
             status: { $ne: "Cancelled" },
             $or: [
-                { start_time: { $lt: end_time }, end_time: { $gt: start_time } } // overlapping range
+                { start_time: { $lt: end_time }, end_time: { $gt: start_time } }
             ]
         });
 
@@ -32,7 +36,9 @@ exports.createReservation = async (req, res) => {
             date,
             start_time,
             end_time,
-            purpose
+            purpose,
+            lab_tech: labDoc.lab_tech._id,
+            status: "Pending"
         });
 
         await reservation.save();
@@ -46,7 +52,6 @@ exports.createReservation = async (req, res) => {
         res.status(500).send("Reservation error.");
     }
 };
-
 // get reservations
 exports.getReservations = async (req, res) => {
     try {
