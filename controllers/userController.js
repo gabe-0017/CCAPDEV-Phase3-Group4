@@ -62,25 +62,28 @@ exports.loginUser = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
     try {
         const { id } = req.params;
-        const updates = { ...req.body }; // copy all fields
-        
-        // new password (double verification)
-        const newPassword = req.body.newPassword;
-        const confirmPassword = req.body.confirmPassword;
+        const updates = { ...req.body };
+
+        const newPassword = req.body.newPassword?.trim();
+        const confirmPassword = req.body.confirmPassword?.trim();
         
         if (newPassword) {
             if (newPassword !== confirmPassword) {
                 return res.status(400).send("Passwords do not match.");
             }
+            if (newPassword.length < 6) {
+                return res.status(400).send("Password must be at least 6 characters.");
+            }
             updates.password = newPassword;
         } else {
+            // only remove password fields if newPassword is empty
             delete updates.password;
             delete updates.newPassword;
             delete updates.confirmPassword;
         }
         
         await User.findByIdAndUpdate(id, updates);
-        req.session.user = { ...req.session.user, ...updates }; // update session
+        req.session.user = { ...req.session.user, ...updates };
         res.redirect(`/profile/${id}`);
     } catch (error) {
         console.error("Profile update error:", error);
