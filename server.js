@@ -98,7 +98,7 @@ app.post("/adminSearch", isAuthenticated, async (req, res) => {
         const { email } = req.body;
         const User = require("./models/userSchema");
         
-        console.log("Searching for email:", email); // debug cmd log
+        // console.log("Searching for email:", email); // debug cmd log
 
         const student = await User.findOne({ 
             $or: [
@@ -108,7 +108,7 @@ app.post("/adminSearch", isAuthenticated, async (req, res) => {
             role: "Student" 
         });
         
-        console.log("Found student:", student ? student.email : "NONE"); // debug cmd log
+        // console.log("Found student:", student ? student.email : "NONE"); // debug cmd log
         
         if (!student) {
             return res.render("adminSearch", { error: `No student found with email "${email}".` });
@@ -116,7 +116,7 @@ app.post("/adminSearch", isAuthenticated, async (req, res) => {
         
         res.redirect(`/manage?userId=${student._id}`);
     } catch (error) {
-        console.error("Admin search error:", error);
+        // console.error("Admin search error:", error); // debug cmd log
         res.status(500).render("adminSearch", { error: "Search error." });
     }
 });
