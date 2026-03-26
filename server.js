@@ -319,23 +319,31 @@ app.get("/delete-labs", async (req, res) => {
 // seed lab techs
 app.get("/seed-techs", async (req, res) => {
     try {
+        const bcrypt = require('bcryptjs');
         const User = require("./models/userSchema");
         const Lab = require("./models/labSchema");
         
         await User.deleteMany({ role: "Lab Technician" });
         
         // create 5 lab techs
-        const techs = [
+        const techsData = [
             { fullname: "John Doe", email: "john_doe@dlsu.edu.com", username: "john_doe_123", password: "techpass_jd1", role: "Lab Technician" },
             { fullname: "Jane Doe", email: "jane_doe@dlsu.edu.com", username: "jane_doe_321", password: "techpass_jd2", role: "Lab Technician" },
             { fullname: "Clyde Barrow", email: "clyde_barrow@dlsu.edu.com", username: "clyde_barrow_456", password: "techpass_cb", role: "Lab Technician" },
             { fullname: "Bonnie Parker", email: "bonnie_parker@dlsu.edu.com", username: "bonnie_parker_654", password: "techpass_bp", role: "Lab Technician" },
             { fullname: "Elliot Alderson", email: "elliot_alderson@dlsu.edu.com", username: "samsepi0l", password: "techpass_ea", role: "Lab Technician" }
         ];
+
+        // hash passwords before save
+        const techs = await Promise.all(techsData.map(async (tech) => {
+            const salt = await bcrypt.genSalt(10);
+            tech.password = await bcrypt.hash(tech.password, salt);
+            return new User(tech);
+        }));
         
         const createdTechs = await User.insertMany(techs);
         
-        // get all labs and assign techs
+        // assign to labs
         const labs = await Lab.find();
         for (let i = 0; i < labs.length; i++) {
             labs[i].lab_tech = createdTechs[i % createdTechs.length]._id;
