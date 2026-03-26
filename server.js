@@ -44,7 +44,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserv
 
 // user authentication
 app.use(session({
-    secret: process.env.SESSION_SECRET || "apdev-mco3-grp4-super-secret-2026",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ 
