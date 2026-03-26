@@ -2,8 +2,9 @@ require('dotenv').config();
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
-const exphbs = require("express-handlebars");
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
+const exphbs = require("express-handlebars");
 const hbs = exphbs.create({
   extname: 'handlebars',
   helpers: { eq: (a, b) => a === b },
@@ -18,10 +19,12 @@ const labController = require("./controllers/labController");
 const reservationController = require("./controllers/reservationController");
 const Reservation = require("./models/reservationSchema");
 
-// database connection (local included)
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserve')
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.error('MongoDB Error:', err));
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.engine("handlebars", exphbs.engine({
   extname: "handlebars",
@@ -33,19 +36,26 @@ app.engine("handlebars", exphbs.engine({
     allowProtoMethodsByDefault: true
   }
 }));
-app.set('view engine', 'handlebars');
-app.set('views', path.join(__dirname, 'views'));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+// database connection 
+// MONGODB_URI = mongodb+srv://johngabrielcalderon_db_user:Group4_Phase3@cluster0.0qwpgqm.mongodb.net/labreserve?retryWrites=true&w=majority
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserve') // local included
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.error('MongoDB Error:', err));
 
-// user authentication (local included)
+// user authentication
+// SESSION_SECRET = apdev-mco3-grp4-super-secret-2026
 app.use(session({
     secret: process.env.SESSION_SECRET || "apdev-mco3-grp4-super-secret-2026",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production' }
+    store: MongoStore.create({ 
+        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserve'
+    }),
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24 // 24 hours
+    }
 }));
 
 // pass user data to all views
