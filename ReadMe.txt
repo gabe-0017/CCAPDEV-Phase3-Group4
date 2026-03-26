@@ -13,6 +13,7 @@ DEPLOYED WEB APP LINK: https://labreserve-cvce.onrender.com/
 ////////////////////////////////////////////////////////////
 
 TEST LOGIN (username / password):
+Student: bob_smith_789 / studentpass_bs
 Lab Tech: john_doe_123 / techpass_jd1
 
 /********** LOCAL SETUP **********/
