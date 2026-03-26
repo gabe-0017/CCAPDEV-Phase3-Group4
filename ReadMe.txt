@@ -1,12 +1,12 @@
 INSTALL DEPENDENCIES (automatically done by render.com):
 npm install express express-handlebars express-session connect-mongo mongoose bcryptjs dotenv
 
+PLATFORM-AS-A-SERVICE LINK (render.com):
+https://dashboard.render.com/web/srv-d716vl3uibrs739ostf0/events
+
 SEED DATA (already done):
 https://labreserve-cvce.onrender.com/seed-labs  -> 5 Labs
 https://labreserve-cvce.onrender.com/seed-techs -> 5 Lab Technicians
-
-Platform as a Service LINK (render.com):
-https://dashboard.render.com/web/srv-d716vl3uibrs739ostf0/events
 
 ////////////////////////////////////////////////////////////
 DEPLOYED WEB APP LINK: https://labreserve-cvce.onrender.com/
