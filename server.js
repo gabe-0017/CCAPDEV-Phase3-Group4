@@ -52,18 +52,21 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'apdev-mco3-grp4-not-so-secret-2026',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ 
-        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserve',
-        ttl: 24 * 60 * 60,
-        autoRemove: 'native',
-        touchAfter: 24 * 3600
-    }),
+    rolling: true,
     cookie: { 
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: 'lax',
-        maxAge: 1000 * 60 * 60 * 24
-    }
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 1000 * 60 * 60 * 24,
+        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
+    },
+    store: MongoStore.create({ 
+        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserve',
+        collectionName: 'sessions',
+        ttl: 24 * 60 * 60,
+        autoRemove: 'interval',
+        autoRemoveInterval: 10
+    })
 }));
 
 // session debug log
