@@ -53,15 +53,28 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ 
-        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserve'
+        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserve',
+        ttl: 24 * 60 * 60,
+        autoRemove: 'native',
+        touchAfter: 24 * 3600
     }),
     cookie: { 
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 1000 * 60 * 60 * 24 // 24 hours
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24
     }
 }));
+
+// session debug log
+app.use((req, res, next) => {
+    console.log('Session:', {
+        user: req.session.user ? 'EXISTS' : 'NULL',
+        id: req.sessionID,
+        cookie: req.session.cookie ? 'EXISTS' : 'NULL'
+    });
+    next();
+});
 
 // pass user data to all views
 app.use((req, res, next) => {
