@@ -41,7 +41,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // create session
 const sessionStore = MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/labreserve',
+    mongoUrl: process.env.MONGODB_URI,
     collectionName: 'sessions',
     ttl: 24 * 60 * 60,
     autoRemove: 'interval',
@@ -49,17 +49,16 @@ const sessionStore = MongoStore.create({
 });
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'apdev-mco3-grp4-not-so-secret-2026',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     rolling: true,
     store: sessionStore,
     cookie: { 
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24,
-        domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     }
 }));
 
@@ -74,11 +73,11 @@ app.use((req, res, next) => {
 
 // session debug log
 app.use((req, res, next) => {
-    console.log('Session:', {
-        user: req.session.user ? 'EXISTS' : 'NULL',
-        id: req.sessionID,
-        cookie: req.session.cookie ? 'EXISTS' : 'NULL'
-    });
+    console.log('===== SESSION LOG =====');
+    console.log('Session ID:', req.sessionID);
+    console.log('User in session:', req.session.user ? 'EXISTS' : 'NULL');
+    console.log('Store ready:', sessionStore.readyState === 1 ? 'YES' : 'NO');
+    console.log('=======================');
     next();
 });
 
