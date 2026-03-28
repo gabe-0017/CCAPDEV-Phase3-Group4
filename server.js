@@ -54,22 +54,20 @@ const sessionStore = MongoStore.create({
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     rolling: true,
-    store: new session.MemoryStore(),
+    store: sessionStore,   
     cookie: { 
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: 'none',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 1000 * 60 * 60 * 24
     }
 }));
 
-mongoose.connection.once('connected', () => {
-    console.log('MongoDB connected - Switching to MongoDB sessions');
-    sessionStore.on('ready', () => {
-        console.log('MongoDB session store ready!');
-    });
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
 });
 
 // req debug log
@@ -106,6 +104,17 @@ const isAuthenticated = (req, res, next) => {
     }
     res.redirect("/");
 };
+
+/* sesseion debug (delete after) */
+app.get('/test-session', (req, res) => {
+    req.session.test = 'hello-' + Date.now();
+    res.json({
+        sessionId: req.sessionID,
+        user: req.session.user,
+        test: req.session.test,
+        cookies: req.headers.cookie
+    });
+});
 
 // login page render
 app.get("/index", (req, res) => {
