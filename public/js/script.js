@@ -11,8 +11,7 @@ if (registerForm) {
         const role = document.getElementById("role").value.trim();
 
         if (password.length < 6) {
-            alert("Password must be at least 6 characters.");
-            return;
+            return res.status(400).send("Password must be at least 6 characters.");
         }
         try {
             const res = await fetch("/register", {
