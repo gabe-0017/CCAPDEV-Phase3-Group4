@@ -5,9 +5,9 @@ const Lab = require("../models/labSchema");
 // create a new reservation
 exports.createReservation = async (req, res) => {
     try {
-        const { userId, lab, seat, date, start_time, end_time, purpose } = req.body;
 
         const userId = req.session.user._id;
+        const { lab, seat, date, start_time, end_time, purpose } = req.body;
         
         if (!user) return res.status(404).send("User not found.");
 
