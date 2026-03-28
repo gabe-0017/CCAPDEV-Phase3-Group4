@@ -1,4 +1,4 @@
-/***** DB CONNECTION / SET ENGINE / SESSION CREATION *****/
+/********** DB CONNECTION / SET ENGINE / SESSION CREATION **********/
 
 require('dotenv').config();
 const path = require("path");
@@ -46,9 +46,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const sessionStore = MongoStore.create({
     mongoUrl: process.env.MONGODB_URI,
     collectionName: 'sessions',
-    ttl: 24 * 60 * 60,
-    autoRemove: 'interval',
-    autoRemoveInterval: 10
+    ttl: 24 * 60 * 60
 });
 
 app.use(session({
@@ -56,11 +54,11 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     rolling: true,
-    store: sessionStore,   
+    store: sessionStore,
     cookie: { 
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24
     }
 }));
@@ -89,7 +87,7 @@ app.use((req, res, next) => {
     next();
 });
 
-/***** ROUTES *****/
+/********** ROUTES **********/
 
 // pass user data to all views
 app.use((req, res, next) => {
@@ -105,7 +103,7 @@ const isAuthenticated = (req, res, next) => {
     res.redirect("/");
 };
 
-/* sesseion debug (delete after) */
+/* sesseion debug route */
 app.get('/test-session', (req, res) => {
     req.session.test = 'hello-' + Date.now();
     res.json({
@@ -323,7 +321,7 @@ app.get('/test-db', async (req, res) => {
     }
 });
 
-/***** DATA CONFIG *****/
+/********** DATA CONFIG **********/
 
 // seed labs
 app.get("/seed-labs", async (req, res) => {
@@ -428,7 +426,7 @@ app.get("/seed-techs", async (req, res) => {
     }
 });
 
-/***** RUN SERVER *****/
+/********** RUN SERVER **********/
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
