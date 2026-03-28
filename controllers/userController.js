@@ -103,7 +103,8 @@ exports.updateUserProfile = async (req, res) => {
             if (newPassword.length < 6) {
                 return res.status(400).send("Password must be at least 6 characters.");
             }
-            updates.password = newPassword;
+            const salt = await bcrypt.genSalt(10);
+            updates.password = await bcrypt.hash(newPassword, salt);
         } else {
             // only remove password fields if newPassword is empty
             delete updates.password;
