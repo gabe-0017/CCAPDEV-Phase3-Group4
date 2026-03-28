@@ -6,12 +6,17 @@ const Lab = require("../models/labSchema");
 exports.createReservation = async (req, res) => {
     try {
 
-        const userId = req.session.user._id;
         const { lab, seat, date, start_time, end_time, purpose } = req.body;
-        
+
+        // 
+        const userId = req.session.user._id;
+        if (!userId) return res.status(401).redirect('/');
+
+        // 
+        const user = await User.findById(userId);
         if (!user) return res.status(404).send("User not found.");
 
-        // get lab w/ technician
+        // find lab w/ technician
         const labDoc = await Lab.findById(lab).populate('lab_tech');
         if (!labDoc) return res.status(404).send("Lab not found.");
 
