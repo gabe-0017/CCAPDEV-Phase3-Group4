@@ -129,27 +129,50 @@
         }
       });
 
-      window.addEventListener('DOMContentLoaded', function() {
+      window.addEventListener('DOMContentLoaded', async function() {
         const urlParams = new URLSearchParams(window.location.search);
-        const prefillLab = urlParams.get('lab');
+        const prefillLabId = urlParams.get('lab');
         const prefillSeat = urlParams.get('seat');
         
-        if (prefillLab && prefillSeat) {
-          const labSelect = document.getElementById('labSelect');
-          if (labSelect) labSelect.value = prefillLab;
-          
-          labSelect.dispatchEvent(new Event('change'));
-          
-          setTimeout(() => {
-            const seatSelect = document.getElementById('seatSelect');
-            if (seatSelect) seatSelect.value = prefillSeat;
-          }, 500);
-          
-          const formCard = document.querySelector('.form-card');
-          const notice = document.createElement('div');
-          notice.style.cssText = 'background:#d4edda;color:#155724;padding:15px;border-radius:8px;margin-bottom:20px;border-left:4px solid #28a745;';
-          notice.innerHTML = `${prefillLab} - Seat ${prefillSeat} selected!`;
-          formCard.insertBefore(notice, formCard.firstChild);
+        if (prefillLabId && prefillSeat) {
+          try {
+            const labRes = await fetch(`/labs/${prefillLabId}`);
+            const labData = await labRes.json();
+            const labName = labData.lab || 'Selected Lab';
+            
+            // prefill form
+            const labSelect = document.getElementById('labSelect');
+            if (labSelect) labSelect.value = prefillLabId;
+            labSelect.dispatchEvent(new Event('change'));
+            
+            setTimeout(() => {
+              const seatSelect = document.getElementById('seatSelect');
+              if (seatSelect) seatSelect.value = prefillSeat;
+            }, 500);
+            
+            const formCard = document.querySelector('.form-card');
+            const notice = document.createElement('div');
+            notice.style.cssText = `
+              background: linear-gradient(90deg, #d4edda, #c3e6c3);
+              color: #155724; 
+              padding: 15px; 
+              border-radius: 12px; 
+              margin-bottom: 20px; 
+              border-left: 5px solid #28a745;
+              font-weight: 500;
+              box-shadow: 0 4px 12px rgba(40,167,69,0.2);
+            `;
+            notice.innerHTML = `<strong>${labName}</strong> - Seat <strong>${prefillSeat}</strong> selected!`;
+            formCard.insertBefore(notice, formCard.firstChild);
+            
+          } catch (error) {
+            console.error('Prefill error:', error);
+            const formCard = document.querySelector('.form-card');
+            const notice = document.createElement('div');
+            notice.style.cssText = 'background:#fee;color:#c33;padding:15px;border-radius:8px;margin-bottom:20px;border-left:4px solid #f66;';
+            notice.textContent = `Seat ${prefillSeat} selected!`;
+            formCard.insertBefore(notice, formCard.firstChild);
+          }
         }
       });
     </script>
@@ -158,4 +181,3 @@
   </body>
 
 </html>
-
