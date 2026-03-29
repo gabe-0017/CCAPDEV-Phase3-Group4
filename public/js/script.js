@@ -87,24 +87,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const editSeatSelect = document.getElementById("editSeat");
 
     async function populateEditSeats(labId, selectedSeat) {
-        if (!labId || !editSeatSelect) return;
-        editSeatSelect.innerHTML = '<option disabled selected>Select a seat</option>';
-
-        try {
-            const res = await fetch(`/labs/${labId}`);
-            if (!res.ok) return;
-            const lab = await res.json();
-
-            lab.seats.forEach(seat => {
-                const option = document.createElement('option');
-                option.value = seat.seatNumber;
-                option.textContent = seat.seatNumber;
-                if (seat.seatNumber === selectedSeat) option.selected = true;
-                editSeatSelect.appendChild(option);
-            });
-        } catch (err) {
-            console.error('Error loading seats for edit modal:', err);
-        }
+      if (!labId || !editSeatSelect) return;
+      editSeatSelect.innerHTML = '<option disabled selected>Select a seat</option>';
+    
+      try {
+        const res = await fetch(`/labs/${labId}`);
+        if (!res.ok) return;
+        const lab = await res.json();
+    
+        lab.seats.forEach(seat => {
+          const option = document.createElement('option');
+          option.value = seat.seatNumber;
+          option.textContent = seat.seatNumber;
+          if (seat.seatNumber === selectedSeat) option.selected = true;
+          editSeatSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Error loading seats for edit modal:', err);
+      }
     }
 
     if (editLabSelect) {
