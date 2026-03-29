@@ -148,7 +148,7 @@
           const formCard = document.querySelector('.form-card');
           const notice = document.createElement('div');
           notice.style.cssText = 'background:#d4edda;color:#155724;padding:15px;border-radius:8px;margin-bottom:20px;border-left:4px solid #28a745;';
-          notice.innerHTML = `Prefilled: Seat ${prefillSeat} in selected lab`;
+          notice.innerHTML = `${prefillLab} - Seat ${prefillSeat} selected!`;
           formCard.insertBefore(notice, formCard.firstChild);
         }
       });
