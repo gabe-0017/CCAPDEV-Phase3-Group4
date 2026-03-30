@@ -10,8 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const router = express.Router();
-const Lab = require('./models/Lab');
-const Reservation = require('./models/Reservation');
+const Lab = require('./models/labSchema');
+const Reservation = require('./models/reservationSchema');
 
 const userController = require("./controllers/userController");
 const labController = require("./controllers/labController");
