@@ -211,13 +211,18 @@ app.get("/labs/:id", isAuthenticated, async (req, res) => {
   }
 });
 app.get('/labs/:labId/slots', isAuthenticated, async (req, res) => {
-    const { labId } = req.params;
-    const { seat, date } = req.query;
-    console.log("==================================================");
-    console.log("Requested labId:", labId, "seat:", seat, "date:", date); // debug log
-
     try {
-        // fetch reservations for this lab, seat, and date
+        const { labId } = req.params;
+        const { seat, date } = req.query;
+
+        if (!seat || !date) {
+            return res.status(400).json({ error: "Seat and date are required." });
+        }
+
+        console.log('==================================================');
+        console.log(`Requested labId: ${labId} seat: ${seat} date: ${date}`);
+
+        // fetch reservations for selected lab/seat/date (ignore 'cancelled' reservations)
         const reservations = await Reservation.find({
             lab: labId,
             seat: seat,
@@ -225,15 +230,38 @@ app.get('/labs/:labId/slots', isAuthenticated, async (req, res) => {
             status: { $ne: "Cancelled" }
         });
 
-        console.log("Found reservations:", reservations); // debug log
-        console.log("==================================================");
-        
-        res.json(reservations);
+        console.log("Found reservations:", reservations);
+
+        // define all possible 30-min slots from 08:00 to 18:00
+        const slots = [];
+        let startHour = 8;
+        let endHour = 18;
+        for (let h = startHour; h < endHour; h++) {
+            slots.push(`${String(h).padStart(2, '0')}:00`);
+            slots.push(`${String(h).padStart(2, '0')}:30`);
+        }
+
+        // remove reserved slots
+        const availableSlots = slots.filter(slot => {
+            return !reservations.some(r => {
+                const resStart = r.start_time;
+                const resEnd = r.end_time;
+
+                return slot >= resStart && slot < resEnd;
+            });
+        });
+
+        if (availableSlots.length === 0) {
+            return res.json({ message: "No available time slots for this seat on this date.", availableSlots: [] });
+        }
+
+        res.json({ seat, date, availableSlots });
+        console.log("Available slots:", availableSlots);
+        console.log('==================================================');
 
     } catch (err) {
-        console.error("Error in /slots route:", err); // debug log
-        console.log("==================================================");
-        res.status(500).json({ error: 'Server error fetching timeslots' });
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 router.get('/:labId/availability', async (req, res) => {
