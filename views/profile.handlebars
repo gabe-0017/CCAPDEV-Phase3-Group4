@@ -4,6 +4,137 @@
     <meta charset="UTF-8" />
     <title>Your Profile</title>
     <link rel="stylesheet" href="../css/styles.css" />
+    <style>
+      .profile-header {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 30px;
+        align-items: flex-start;
+      }
+
+      .profile-picture-section {
+        text-align: center;
+      }
+
+      .profile-picture {
+        width: 200px;
+        height: 200px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid #ddd;
+        background-color: #f0f0f0;
+        display: block;
+        margin: 0 auto 15px;
+      }
+
+      .profile-picture-placeholder {
+        width: 200px;
+        height: 200px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        background-color: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-size: 14px;
+        margin: 0 auto 15px;
+      }
+
+      .upload-picture-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        display: inline-block;
+      }
+
+      .upload-picture-btn:hover {
+        background-color: #0056b3;
+      }
+
+      #profilePictureInput {
+        display: none;
+      }
+
+      .profile-info {
+        flex: 1;
+      }
+
+      .description-section {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+      }
+
+      .description-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .description-content {
+        color: #666;
+        line-height: 1.5;
+        word-wrap: break-word;
+      }
+
+      .description-textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: Arial, sans-serif;
+        resize: vertical;
+      }
+
+      .btn-edit-description {
+        background-color: #ff9800;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .btn-edit-description:hover {
+        background-color: #e68900;
+      }
+
+      .modal {
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-card {
+        background-color: #fefefe;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+    </style>
   </head>
 
   <body class="bg">
@@ -25,48 +156,162 @@
     </header>
 
     <main class="container">
-      <h2>My Profile</h2>
-      <p class="subtitle">View or update your account information.</p>
+      {{#if isOwnProfile}}
+        <h2>My Profile</h2>
+        <p class="subtitle">View your account information.</p>
 
-      <div class="form-card">
-        <form method="POST" action="/profile/{{user._id}}/update">
+        <div class="form-card">
+          <div style="text-align: center; margin-bottom: 20px;">
+            {{#if user.profilePicture}}
+              <img src="{{user.profilePicture}}" alt="Profile Picture" class="profile-picture" id="profilePictureDisplay" />
+            {{else}}
+              <div class="profile-picture-placeholder">
+                No Photo
+              </div>
+            {{/if}}
+          </div>
+
           <div class="form-group">
             <label>Full Name</label>
-            <input type="text" name="fullname" value="{{user.fullname}}" />
-          </div>
-        
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" value="{{user.email}}" />
+            <input type="text" value="{{user.fullname}}" disabled />
           </div>
         
           <div class="form-group">
             <label>Username</label>
-            <input type="text" name="username" value="{{user.username}}" />
+            <input type="text" value="{{user.username}}" disabled />
           </div>
         
           <div class="form-group">
-            <label>New Password</label>
-            <p style="color:#808080; font-size:10px;">leave blank to keep current password</p>
-            <input type="password" name="newPassword" id="newPassword" placeholder="Enter new password" />
-          </div>
-
-          <div class="form-group">
-            <label>Re-enter New Password</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" />
+            <label>Email</label>
+            <input type="email" value="{{user.email}}" disabled />
           </div>
         
           <div class="form-group">
             <label>Role</label>
             <input type="text" value="{{user.role}}" disabled />
           </div>
-        
-          <div style="display:flex; gap:15px;">
-            <button type="submit" class="btn-cancel-modal">Save Changes</button>
-            <button type="button" id="deleteAccountBtn" class="btn-confirm-modal">Delete Account</button>
+
+          <div class="form-group">
+            <label>About Me</label>
+            <div style="background-color: #f9f9f9; padding: 10px; border-radius: 4px; min-height: 80px; display: flex; align-items: center;">
+              {{#if user.description}}
+                <div class="description-content">{{user.description}}</div>
+              {{else}}
+                <div class="description-content" style="color: #999; font-style: italic;">No description added yet.</div>
+              {{/if}}
+            </div>
           </div>
-        </form>
-      </div>
+
+          <button class="btn-edit-description" onclick="openEditModal()" style="width: 100%;">Edit Profile</button>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="editProfileModal" class="modal">
+          <div class="modal-card">
+            <h3 style="margin-bottom: 20px;">Edit Profile</h3>
+            
+            <form method="POST" action="/profile/{{user._id}}/update" id="editForm" enctype="multipart/form-data">
+              <div style="text-align: center; margin-bottom: 20px;">
+                {{#if user.profilePicture}}
+                  <img src="{{user.profilePicture}}" alt="Profile Picture" class="profile-picture" id="editProfilePictureDisplay" />
+                {{else}}
+                  <div class="profile-picture-placeholder" id="editProfilePicturePlaceholder">
+                    No Photo
+                  </div>
+                {{/if}}
+                <button type="button" class="upload-picture-btn" onclick="document.getElementById('profilePictureInput').click()" style="margin-top: 10px;">
+                  {{#if user.profilePicture}}
+                    Change Photo
+                  {{else}}
+                    Upload Photo
+                  {{/if}}
+                </button>
+                <input type="file" id="profilePictureInput" name="profilePicture" accept="image/*" style="display: none;" />
+              </div>
+
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="fullname" value="{{user.fullname}}" />
+              </div>
+            
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{user.email}}" />
+              </div>
+            
+              <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" value="{{user.username}}" />
+              </div>
+            
+              <div class="form-group">
+                <label>New Password</label>
+                <p style="color:#808080; font-size:10px;">leave blank to keep current password</p>
+                <input type="password" name="newPassword" id="newPassword" placeholder="Enter new password" />
+              </div>
+
+              <div class="form-group">
+                <label>Re-enter New Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" />
+              </div>
+
+              <div class="form-group">
+                <label>About Me</label>
+                <textarea class="description-textarea" id="descriptionTextarea" name="description" placeholder="Tell others about yourself">{{user.description}}</textarea>
+              </div>
+
+              <div style="display:flex; gap:15px; margin-top: 20px;">
+                <button type="submit" class="btn-cancel-modal">Save Changes</button>
+                <button type="button" class="btn-cancel-modal" onclick="closeEditModal()">Cancel</button>
+                <button type="button" id="deleteAccountBtn" class="btn-confirm-modal">Delete Account</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      {{else}}
+        <h2>{{user.fullname}}'s Profile</h2>
+        <p class="subtitle">View {{user.fullname}}'s public profile.</p>
+
+        <div class="form-card">
+          <div style="text-align: center; margin-bottom: 20px;">
+            {{#if user.profilePicture}}
+              <img src="{{user.profilePicture}}" alt="Profile Picture" class="profile-picture" />
+            {{else}}
+              <div class="profile-picture-placeholder">
+                No Photo
+              </div>
+            {{/if}}
+          </div>
+
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" value="{{user.fullname}}" disabled />
+          </div>
+        
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" value="{{user.username}}" disabled />
+          </div>
+        
+          <div class="form-group">
+            <label>Role</label>
+            <input type="text" value="{{user.role}}" disabled />
+          </div>
+
+          <div class="form-group">
+            <label>About Me</label>
+            <div style="background-color: #f9f9f9; padding: 10px; border-radius: 4px; min-height: 80px; display: flex; align-items: center;">
+              {{#if user.description}}
+                <div class="description-content">{{user.description}}</div>
+              {{else}}
+                <div class="description-content" style="color: #999; font-style: italic;">No description provided.</div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+
+      {{/if}}
     </main>
 
     {{> delete}}
@@ -85,43 +330,90 @@
     <script src="/js/script.js"></script>
 
     <script>
-    const deleteAccountBtn = document.getElementById("deleteAccountBtn");
-    const deleteModal = document.getElementById("deleteModal");
-    const cancelDelete = document.getElementById("cancelDelete");
-    const confirmDelete = document.getElementById("confirmDelete");
-    
-    if (deleteAccountBtn) {
-        deleteAccountBtn.addEventListener("click", () => {
-            deleteModal.style.display = "flex";
-        });
-    }
-    
-    if (cancelDelete) {
-        cancelDelete.addEventListener("click", () => {
-            deleteModal.style.display = "none";
-        });
-    }
-    
-    if (confirmDelete) {
-        confirmDelete.addEventListener("click", async () => {
-            try {
-                const res = await fetch("/deleteAccount", {
-                    method: "DELETE",
-                    credentials: 'include'
-                });
-                if (res.ok) {
-                    deleteModal.style.display = "none";
-                    alert("Account deleted successfully.");
-                    window.location.href = "/";
-                } else {
-                    alert(await res.text() || "Delete failed");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Delete error.");
+      function openEditModal() {
+        document.getElementById('editProfileModal').style.display = 'flex';
+      }
+
+      function closeEditModal() {
+        document.getElementById('editProfileModal').style.display = 'none';
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        const modal = document.getElementById('editProfileModal');
+        if (event.target === modal) {
+          closeEditModal();
+        }
+      }
+
+      // Preview image when selected
+      document.getElementById('profilePictureInput')?.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.getElementById('editProfilePictureDisplay');
+            const placeholder = document.getElementById('editProfilePicturePlaceholder');
+            
+            if (img) {
+              img.src = e.target.result;
+            } else if (placeholder) {
+              const newImg = document.createElement('img');
+              newImg.src = e.target.result;
+              newImg.className = 'profile-picture';
+              newImg.id = 'editProfilePictureDisplay';
+              placeholder.parentNode.replaceChild(newImg, placeholder);
             }
-        });
-    }
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Handle form submission
+      document.getElementById('editForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const userId = "{{user._id}}";
+        
+        try {
+          const response = await fetch(`/profile/${userId}/update`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+          });
+          
+          if (response.ok) {
+            alert('Profile updated successfully!');
+            location.reload();
+          } else {
+            alert('Error updating profile');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred while updating profile');
+        }
+      });
+
+      // Delete account handler
+      document.getElementById('deleteAccountBtn')?.addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+          fetch(`/profile/{{user._id}}/delete`, {
+            method: 'POST',
+            credentials: 'include'
+          }).then(response => {
+            if (response.ok) {
+              alert('Account deleted successfully');
+              window.location.href = '/';
+            } else {
+              alert('Error deleting account');
+            }
+          }).catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred');
+          });
+        }
+      });
     </script>
 
     {{> logout}}
