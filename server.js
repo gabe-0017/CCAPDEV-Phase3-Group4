@@ -205,7 +205,24 @@ app.get("/labs/:id", isAuthenticated, async (req, res) => {
     const Lab = require("./models/labSchema");
     const lab = await Lab.findById(req.params.id).populate("lab_tech");
     if (!lab) return res.status(404).json({ error: "Lab not found" });
-    res.json(lab);
+    // Get all approved reservations for this lab to show who reserved each seat
+    const reservations = await Reservation.find({
+      lab: req.params.id,
+      status: "Approved"
+    }).populate("userId", "fullname");
+    
+    
+    const reserverMap = {};
+    reservations.forEach(res => {
+      if (!reserverMap[res.seat]) {
+        reserverMap[res.seat] = {
+          userId: res.userId._id,
+          fullname: res.userId.fullname
+        };
+      }
+    });
+    
+    res.json({...lab.toObject(), reserverMap});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -240,25 +257,27 @@ app.get('/labs/:labId/slots', isAuthenticated, async (req, res) => {
             slots.push(`${String(h).padStart(2, '0')}:00`);
             slots.push(`${String(h).padStart(2, '0')}:30`);
         }
+       // Populate userId for each reservation to get full names
+        await Reservation.populate(reservations, { path: 'userId', select: 'fullname' });
 
-        // remove reserved slots
-        const availableSlots = slots.filter(slot => {
-            return !reservations.some(r => {
+        // Build slot details with availability and reserver info
+        const slotDetails = slots.map(slot => {
+            const reservation = reservations.find(r => {
                 const resStart = r.start_time;
                 const resEnd = r.end_time;
-
                 return slot >= resStart && slot < resEnd;
             });
+            return {
+                time: slot,
+                available: !reservation,
+                reserverName: reservation ? reservation.userId.fullname : null,
+                reserverId: reservation ? reservation.userId._id : null
+            };
         });
 
-        if (availableSlots.length === 0) {
-            return res.json({ message: "No available time slots for this seat on this date.", availableSlots: [] });
-        }
-
-        res.json({ seat, date, availableSlots });
-        console.log("Available slots:", availableSlots);
+        res.json({ seat, date, slotDetails });
+        console.log("Slot details:", slotDetails);
         console.log('==================================================');
-
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });
